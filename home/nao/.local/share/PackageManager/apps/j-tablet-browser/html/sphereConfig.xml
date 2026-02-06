@@ -1,0 +1,699 @@
+<config>
+    <!-- states definition -->
+    <states>
+        <!--Sound -->
+        <state dialog="-1" speaking="-1" listening="-1" speechDetected="-1" touching="-1" targetting="-1" peopleInView="-1" flashing="-1" soundDetected="-1" waving="1" state="qidefault"/>
+        <state dialog="0" speaking="0" listening="0" speechDetected="0" touching="-1" targetting="-1" peopleInView="-1" flashing="-1" soundDetected="1" waving="-1" state="sound"/>
+        <state dialog="-1" speaking="-1" listening="-1" speechDetected="-1" touching="-1" targetting="-1" peopleInView="-1" flashing="1" soundDetected="-1" waving="-1" state="sound"/>
+        <state dialog="-1" speaking="0" listening="-1" speechDetected="-1" touching="1" targetting="-1" peopleInView="-1" flashing="0" soundDetected="-1" waving="-1" state="touch"/>
+        <state dialog="0" speaking="0" listening="-1" speechDetected="-1" touching="-1" targetting="0" peopleInView="1" zone="1" flashing="0" soundDetected="-1" waving="-1" state="people"/>
+        <state dialog="0" speaking="0" listening="-1" speechDetected="-1" touching="-1" targetting="0" peopleInView="1" zone="2" flashing="0" soundDetected="-1" waving="-1" state="people"/>
+        <state dialog="0" speaking="0" listening="-1" speechDetected="-1" touching="-1" targetting="0" peopleInView="1" zone="-1" flashing="0" soundDetected="-1" waving="-1" state="people"/>
+        <state dialog="0" speaking="0" listening="-1" speechDetected="-1" touching="-1" targetting="1" peopleInView="1" zone="1" flashing="0" soundDetected="-1" waving="-1" state="targetted"/>
+        <state dialog="0" speaking="0" listening="-1" speechDetected="-1" touching="-1" targetting="1" peopleInView="1" zone="2" flashing="0" soundDetected="-1" waving="-1" state="targetted"/>
+        <state dialog="0" speaking="0" listening="-1" speechDetected="-1" touching="-1" targetting="1" peopleInView="1" zone="-1" flashing="0" soundDetected="-1" waving="-1" state="targetted"/>
+        <state dialog="1" speaking="0" listening="0" speechDetected="0" touching="-1" targetting="-1" peopleInView="-1" flashing="0" soundDetected="-1" waving="-1" state="think"/>
+        <state dialog="1" speaking="1" listening="0" speechDetected="-1" touching="-1" targetting="-1" peopleInView="-1" flashing="0" soundDetected="-1" waving="-1" state="animationSpeak"/>
+        <state dialog="1" speaking="0" listening="1" speechDetected="0" touching="-1" targetting="-1" peopleInView="-1" flashing="0" soundDetected="-1" waving="-1" state="listen"/>
+        <state dialog="1" speaking="0" listening="0" speechDetected="1" touching="-1" targetting="-1" peopleInView="-1" flashing="0" soundDetected="-1" waving="-1" state="listen"/>
+        <state dialog="0" speaking="1" listening="-1" speechDetected="-1" touching="-1" targetting="-1" peopleInView="-1" flashing="0" soundDetected="-1" waving="-1" state="animationSpeak"/>
+        <state dialog="-1" speaking="-1" listening="-1" speechDetected="-1" touching="-1" targetting="-1" peopleInView="-1" flashing="0" soundDetected="-1" waving="-1" state="qidefault"/>
+    </states>
+
+    <!-- define list of colors, index (start with 0) will be used in parameters -->
+    <colors>
+        <!-- color definition (hsbRange and entries are alone at this time, you can implements new type in java code if needed, @see jp.softbank.custombrowser.opengl.color.*) -->
+        <!-- 0: cyan  unused-->
+        <hsbRange hueFrom="0.45" hueTo="0.52" satFrom=".7" satTo=".8" briFrom=".9" briTo=".9"/>
+        <!-- 1: pink reddish mix -->
+        <entries>
+            <!-- red to yellow-->
+            <hsbRange hueFrom="0.0" hueTo="0.2" satFrom=".7" satTo=".9" briFrom=".7" briTo=".9"/>
+            <!-- red to orange-->
+            <hsbRange hueFrom="0.0" hueTo="0.15" satFrom=".7" satTo=".9" briFrom=".7" briTo=".9"/>
+            <!-- purple to red-->
+            <hsbRange hueFrom="0.8" hueTo="1.0" satFrom=".7" satTo=".9" briFrom=".7" briTo=".9"/>
+            <hsbRange hueFrom="0.8" hueTo="1.0" satFrom=".7" satTo=".9" briFrom=".7" briTo=".9"/>
+            <!-- darker purple to red-->
+            <hsbRange hueFrom="0.8" hueTo="1.0" satFrom=".8" satTo="1" briFrom=".7" briTo=".9"/>
+        </entries>
+        <!-- 2 multicolored -->
+        <hsbRange hueFrom="0.0" hueTo="1" satFrom=".9" satTo="1" briFrom=".7" briTo=".9"/>
+        <!-- 3 blues -->
+        <entries>
+			<hsbRange hueFrom="0.54" hueTo="0.87" satFrom="0.6" satTo="0.8" briFrom=".8" briTo="1.0"/>
+			<hsbRange hueFrom="0.54" hueTo="0.87" satFrom="0.6" satTo="0.8" briFrom=".8" briTo="1.0"/>
+			<hsbRange hueFrom="0.54" hueTo="0.87" satFrom="0.6" satTo="0.8" briFrom=".8" briTo="1.0"/>
+            <hsbRange hueFrom="0.8" hueTo="1.0" satFrom=".7" satTo=".9" briFrom=".7" briTo=".9"/>
+			<hsbRange hueFrom="0.0" hueTo="1" satFrom=".9" satTo="1" briFrom=".7" briTo=".9"/>
+        </entries>
+        <!-- 4 greens -->
+        <entries>
+			<hsbRange hueFrom="0.13" hueTo="0.5" satFrom=".7" satTo=".9" briFrom=".7" briTo=".9"/>
+			<hsbRange hueFrom="0.13" hueTo="0.5" satFrom=".7" satTo=".9" briFrom=".7" briTo=".9"/>
+			<hsbRange hueFrom="0.13" hueTo="0.5" satFrom=".7" satTo=".9" briFrom=".7" briTo=".9"/>
+			<hsbRange hueFrom="0.13" hueTo="0.5" satFrom=".7" satTo=".9" briFrom=".7" briTo=".9"/>
+            <hsbRange hueFrom="0.8" hueTo="1.0" satFrom=".7" satTo=".9" briFrom=".7" briTo=".9"/>
+			<hsbRange hueFrom="0.0" hueTo="1" satFrom=".9" satTo="1" briFrom=".7" briTo=".9"/>
+        </entries>
+        <!-- 5: white -->
+        <hsbRange hueFrom="0" hueTo="0" satFrom="0" satTo="0" briFrom=".2" briTo=".7"/>
+        <!-- 6: purple/magenta unused -->
+        <hsbRange hueFrom="0.78" hueTo="0.83" satFrom=".7" satTo=".8" briFrom=".9" briTo=".9"/>
+    </colors>
+
+    <!-- used to clamp z value retrieved from ALPeoplePerception -->
+    <distanceDetectionRange min="0.5" max="2"/>
+
+    <!-- react/listen (was qiquick) = 1 when energy > min value -->
+    <soundLevelDetection min="0.5"/>
+
+    <!--  global parameters, each stimulus can declare values for each states, if a state is not declared, the value won't change -->
+
+    <!-- apply bsize factor on bubble which are under the animationTouch position -->
+    <touchFactor>
+        <people target="0" delay="0" duration="1"/>
+        <targetted target="0" delay="0" duration="1"/>
+        <qidefault target="0" delay="0" duration="1"/>
+        <animationSpeak target="0" delay="0" duration="1"/>
+    </touchFactor>
+    <!-- global brightness "life" animation -->
+    <pulse>
+        <people target="0" delay="0" duration="0.5"/>
+        <targetted target="0" delay="0" duration="0.5"/>
+        <qidefault target="0" delay="0" duration="0.5"/>
+        <animationSpeak target="0" delay="0" duration="0.5"/>
+    </pulse>
+    <!-- global brightness "life" animation, brightness varying from layer defined value to layer defined value + this one-->
+    <pressure>
+        <people target="0" delay="0" duration="0.5"/>
+        <targetted target="0" delay="0" duration="0.5"/>
+        <qidefault target="0" delay="0" duration="0.5"/>
+        <animationSpeak target="0" delay="0" duration="0.5"/>
+    </pressure>
+
+    <!-- default parameters for layers -->
+    <defautLayerconfig>
+        <!-- color transition animation is different, not yet tweekable -->
+        <colors>
+            <sound target="2" stepSizePercent="0.05"/>
+            <think target="4" stepSizePercent="0.02"/>
+            <listen target="3" stepSizePercent="0.02"/>
+            <people target="1" stepSizePercent="0.03"/>
+            <targetted target="1" stepSizePercent="0.03"/>
+            <qidefault target="1" stepSizePercent="0.03"/>
+            <animationSpeak target="2" stepSizePercent="0.05"/>
+        </colors>
+        <!-- bspeed factor, applied to bubbles -->
+        <bspeed>
+            <touch target="0" delay="0"/>
+            <people target="40" delay="0" duration="0.5"/>
+            <targetted target="80" delay="0" duration="0.5"/>
+            <qidefault target="10" delay="0" duration="0.5"/>
+            <animationSpeak target="50" delay="0" duration="0.5"/>
+        </bspeed>
+        <!-- speed factor, applied to global rotations -->
+        <speed>
+            <!-- <touch target="0" delay="0"/> -->
+            <people target="40" delay="0" duration="0.5"/>
+            <targetted target="80" delay="0" duration="0.5"/>
+            <qidefault target="10" delay="0" duration="0.5"/>
+            <animationSpeak target="50" delay="0" duration="0.5"/>
+        </speed>
+        <!-- position of human ratio -->
+        <humanFactor>
+            <people target="0" delay="0" duration="1"/>
+            <targetted target="0" delay="0" duration="1"/>
+            <qidefault target="0" delay="0" duration="1"/>
+            <animationSpeak target="0" delay="0" duration="1"/>
+        </humanFactor>
+        <!-- bubble size -->
+        <bsize>
+            <people target="1.2" delay="0" duration="0.5"/>
+            <targetted target="1.2" delay="0" duration="0.5"/>
+            <qidefault target="1.2" delay="0" duration="0.5"/>
+            <animationSpeak target="1.2" delay="0" duration="0.5"/>
+        </bsize>
+        <!-- global layer brightness -->
+        <brightness>
+            <people target="0.8" delay="0" duration="0.5"/>
+            <targetted target="0.8" delay="0" duration="0.5"/>
+            <qidefault target="0.8" delay="0" duration="0.5"/>
+            <animationSpeak target="0.8" delay="0" duration="0.5"/>
+            <sound target="1.0" delay="0" duration="0.5"/>
+        </brightness>
+        <!-- distance ratio from center -->
+        <distance>
+            <people delay="0" duration="1"/>
+            <targetted delay="0" duration="1"/>
+            <qidefault delay="0" duration="1"/>
+            <animationSpeak delay="0" duration="1"/>
+        </distance>
+        <!-- target value of chaos and percentage -->
+        <chaos1> <!-- target is clamp 0..1, you must set higher to go @ 100% quickly -->
+            <people duration="1"/>
+            <targetted duration="1"/>
+            <qidefault duration="1"/>
+            <touch duration="1"/>
+            <sound duration="1"/>
+            <think duration="1"/>
+            <listen duration="1"/>
+            <animationSpeak duration="1"/>
+        </chaos1>
+        <chaosTarget1>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <touch/>
+            <sound/>
+            <think/>
+            <listen/>
+            <animationSpeak/>
+        </chaosTarget1>
+        <chaos2>
+            <people duration="0.5"/>
+            <targetted duration="0.5"/>
+            <qidefault duration="0.5"/>
+            <animationSpeak duration="0.5"/>
+        </chaos2>
+        <chaosTarget2>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <animationSpeak/>
+        </chaosTarget2>
+        <chaos3>
+            <people duration="0.5"/>
+            <targetted duration="0.5"/>
+            <qidefault duration="0.5"/>
+            <touch duration="0.5"/>
+            <sound duration="0.5"/>
+            <think duration="0.5"/>
+            <listen duration="0.5"/>
+            <animationSpeak duration="0.5"/>
+        </chaos3>
+        <chaosTarget3>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <touch/>
+            <sound/>
+            <think/>
+            <listen/>
+            <animationSpeak/>
+        </chaosTarget3>
+    </defautLayerconfig>
+
+    <!--  layers -->
+    <!--  inner -->
+    <layer>
+        <!-- parameters, must declare each state even if it's present in default, no declaration mean no change between last state and undeclared one -->
+        <colors>
+            <!-- <touch/> -->
+            <sound/>
+            <think/>
+            <listen/>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <animationSpeak/>
+        </colors>
+        <bspeed>
+            <people />
+            <targetted />
+            <qidefault />
+            <animationSpeak/>
+            <touch/>
+        </bspeed>
+        <speed>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <animationSpeak/>
+            <!-- <touch/> -->
+        </speed>
+        <humanFactor>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <animationSpeak/>
+        </humanFactor>
+        <bsize>
+            <people target="1.5"/>
+            <targetted target="1.5"/>
+            <qidefault target="1.5"/>
+            <animationSpeak target="1.5"/>
+        </bsize>
+        <brightness>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <!-- <touch/> -->
+            <sound target="1.0" delay="0" duration="0.7" outerRatio="0.5" equation="Elastic.OUT"/>
+            <think target="1.0" delay="0" duration="0.7" outerRatio="0.5" equation="Elastic.OUT"/>
+            <listen target="1.0" delay="0" duration="0.7" outerRatio="0.5" equation="Elastic.OUT"/>
+            <animationSpeak/>
+        </brightness>
+        <distance>
+            <people target="0.2"/>
+            <targetted target="0.2"/>
+            <qidefault target="0.2"/>
+            <animationSpeak target="0.2"/>
+        </distance>
+        <chaos1>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <!-- <touch/> -->
+            <sound/>
+            <think/>
+            <listen/>
+            <animationSpeak/>
+        </chaos1>
+        <chaosTarget1>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <!-- <touch/> -->
+            <sound/>
+            <think/>
+            <listen/>
+            <animationSpeak/>
+        </chaosTarget1>
+        <chaos2>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <animationSpeak/>
+        </chaos2>
+        <chaosTarget2>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <animationSpeak/>
+        </chaosTarget2>
+        <chaos3>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <!-- <touch/> -->
+            <sound/>
+            <think/>
+            <listen/>
+            <animationSpeak/>
+        </chaos3>
+        <chaosTarget3>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <!-- <touch/> -->
+            <sound/>
+            <think/>
+            <listen/>
+            <animationSpeak/>
+        </chaosTarget3>
+        <!-- visual bubbles -->
+        <spheres nb="1" size="64" rotX="0.04" rotY="0.0025" rotZ="0.025">
+            <sphere nb="20" minDist="0.1" maxDist="0.3" minSpeed="0.0001" maxSpeed="0.0003">
+            </sphere>
+        </spheres>
+    </layer>
+    <!--  middle -->
+    <layer>
+        <colors>
+            <!-- <touch/> -->
+            <sound target="5"/>
+            <think target="4"/>
+            <listen/>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <animationSpeak/>
+        </colors>
+        <bspeed>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <touch/>
+            <sound target="100" delay="0" duration="0.2" outerRatio="0.2"/>
+            <think target="100" delay="0" duration="0.5" outerRatio="0.2" equation="Elastic.OUT"/>
+            <listen target="100" delay="0" duration="0.5" outerRatio="0.2" equation="Elastic.OUT"/>
+            <animationSpeak/>
+        </bspeed>
+        <speed>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <!-- <touch/> -->
+            <sound target="100" delay="0" duration="0.2" outerRatio="0.2"/>
+            <think target="100" delay="0" duration="0.5" outerRatio="0.2" equation="Elastic.OUT"/>
+            <listen target="100" delay="0" duration="0.5" outerRatio="0.2" equation="Elastic.OUT"/>
+            <animationSpeak/>
+        </speed>
+        <humanFactor>
+            <!-- <touch/> -->
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <animationSpeak/>
+        </humanFactor>
+        <bsize>
+            <people target="0.7" delay="0" duration="0.5" outerRatio="0.2" equation="Elastic.OUT"/>
+            <targetted target="0.7" delay="0" duration="0.5" outerRatio="0.2" equation="Elastic.OUT"/>
+            <qidefault target="0.7" delay="0" duration="0.5" outerRatio="0.2" equation="Elastic.OUT"/>
+            <!-- <touch/> -->
+            <sound target="0.7" delay="0" duration="0.2" outerRatio="0.2"/>
+            <think target="0.7" delay="0" duration="0.5" outerRatio="0.2" equation="Elastic.OUT"/>
+            <listen target="0.7" delay="0" duration="0.5" outerRatio="0.2" equation="Elastic.OUT"/>
+            <animationSpeak/>
+        </bsize>
+        <brightness>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <!-- <touch/> -->
+            <sound target="0.8" delay="0" duration="0.2" outerRatio="0.2"/>
+            <think target="0.8" delay="0" duration="0.7" outerRatio="0.2" equation="Elastic.OUT"/>
+            <listen target="0.8" delay="0" duration="0.7" outerRatio="0.2" equation="Elastic.OUT"/>
+            <animationSpeak/>
+        </brightness>
+        <distance>
+            <people target="1.1" delay="0" duration="5" outerRatio="0.2" equation="Elastic.OUT"/>
+            <targetted target="1.1" delay="0" duration="5" outerRatio="0.2" equation="Elastic.OUT"/>
+            <qidefault target="1.1" delay="0" duration="5" outerRatio="0.2" equation="Elastic.OUT"/>
+            <!-- <touch/> -->
+            <sound target="1.1" delay="0" duration="0.2" outerRatio="0.2"/>
+            <think target="1.1" delay="0" duration="0.5" outerRatio="0.2" equation="Elastic.OUT"/>
+            <listen target="1.1" delay="0" duration="0.5" outerRatio="0.2" equation="Elastic.OUT"/>
+            <animationSpeak target="0.6"/>
+        </distance>
+        <chaos1>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <!-- <touch/> -->
+            <sound/>
+            <think/>
+            <listen/>
+            <animationSpeak/>
+        </chaos1>
+        <chaosTarget1>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <!-- <touch/> -->
+            <sound/>
+            <think/>
+            <listen/>
+            <animationSpeak/>
+        </chaosTarget1>
+        <chaos2>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <animationSpeak/>
+        </chaos2>
+        <chaosTarget2>
+            <!-- <touch/> -->
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <animationSpeak/>
+        </chaosTarget2>
+        <chaos3>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <!-- <touch/> -->
+            <sound/>
+            <think/>
+            <listen/>
+            <animationSpeak/>
+        </chaos3>
+        <chaosTarget3>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <!-- <touch/> -->
+            <sound/>
+            <think/>
+            <listen/>
+            <animationSpeak/>
+        </chaosTarget3>
+        <spheres nb="1" size="72" rotX="0.004" rotY="0.025" rotZ="0.025">
+            <sphere nb="40" minDist="0.3" maxDist="0.90" minSpeed="0.0001" maxSpeed="0.0006">
+            </sphere>
+        </spheres>
+    </layer>
+    <!--  outer -->
+    <layer>
+        <colors>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <!-- <touch/> -->
+            <sound target="5"/>
+            <think/>
+            <listen/>
+            <animationSpeak/>
+        </colors>
+        <bspeed>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <touch/>
+            <sound target="50" delay="0" duration="0.0" outerRatio="0.2" equation="Elastic.OUT"/>
+            <think target="50" delay="0" duration="0.5" outerRatio="0.2" equation="Elastic.OUT"/>
+            <listen target="50" delay="0" duration="0.5" outerRatio="0.2" equation="Elastic.OUT"/>
+            <animationSpeak/>
+        </bspeed>
+        <speed>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <!-- <touch/> -->
+            <sound target="50" delay="0" duration="0.0" outerRatio="0.2" equation="Elastic.OUT"/>
+            <think target="50" delay="0" duration="0.5" outerRatio="0.2" equation="Elastic.OUT"/>
+            <listen target="50" delay="0" duration="0.5" outerRatio="0.2" equation="Elastic.OUT"/>
+            <animationSpeak/>
+        </speed>
+        <humanFactor>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <animationSpeak/>
+        </humanFactor>
+        <bsize>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <!-- <touch/> -->
+            <sound target="0.5" delay="0" duration="0.5" outerRatio="0.2" equation="Elastic.OUT"/>
+            <think target="0.5" delay="0" duration="0.5" outerRatio="0.2" equation="Elastic.OUT"/>
+            <listen target="0.5" delay="0" duration="0.5" outerRatio="0.2" equation="Elastic.OUT"/>
+            <animationSpeak/>
+        </bsize>
+        <brightness>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <!-- <touch/> -->
+            <sound target="1.0" delay="0" duration="0.5" outerRatio="0.2" equation="Elastic.OUT"/>
+            <think target="1.0" delay="0" duration="0.7" outerRatio="0.2" equation="Elastic.OUT"/>
+            <listen target="1.0" delay="0" duration="0.7" outerRatio="0.2" equation="Elastic.OUT"/>
+            <animationSpeak/>
+        </brightness>
+        <distance>
+            <people target="0.3"/>
+            <targetted target="0.3"/>
+            <qidefault target="0.3"/>
+            <!-- <touch/> -->
+            <sound target="1.2" delay="0" duration="0.5" outerRatio="0.2" equation="Elastic.OUT"/>
+            <think target="1.2" delay="0" duration="3" outerRatio="0.2" equation="Elastic.OUT"/>
+            <listen target="1.2" delay="0" duration="3" outerRatio="0.2" equation="Elastic.OUT"/>
+            <animationSpeak target="0.3"/>
+        </distance>
+        <chaos1>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <!-- <touch/> -->
+            <sound/>
+            <think/>
+            <listen/>
+            <animationSpeak/>
+        </chaos1>
+        <chaosTarget1>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <!-- <touch/> -->
+            <sound/>
+            <think/>
+            <listen/>
+            <animationSpeak/>
+        </chaosTarget1>
+        <chaos2>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <!-- <touch/> -->
+            <sound/>
+            <think/>
+            <listen/>
+            <animationSpeak/>
+        </chaos2>
+        <chaosTarget2>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <!-- <touch/> -->
+            <sound/>
+            <think/>
+            <listen/>
+            <animationSpeak/>
+        </chaosTarget2>
+        <chaos3>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <!-- <touch/> -->
+            <sound/>
+            <think/>
+            <listen/>
+            <animationSpeak/>
+        </chaos3>
+        <chaosTarget3>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <!-- <touch/> -->
+            <sound/>
+            <think/>
+            <listen/>
+            <animationSpeak/>
+        </chaosTarget3>
+        <spheres nb="1" size="76" rotX="0.04" rotY="0.0025" rotZ="0.025">
+            <sphere nb="40" minDist="0.8" maxDist="0.99" minSpeed="0.0002" maxSpeed="0.0008">
+            </sphere>
+        </spheres>
+    </layer>
+    <!--  rebels -->
+    <layer>
+        <colors>
+            <listen target="2"/>
+            <think target="2"/>
+            <!-- <touch/> -->
+            <people/>
+            <targetted target="2"/>
+            <qidefault/>
+            <animationSpeak/>
+        </colors>
+        <bspeed>
+            <listen/>
+            <think/>
+            <touch/>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <animationSpeak/>
+        </bspeed>
+        <speed>
+            <listen/>
+            <think/>
+            <touch/>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <animationSpeak/>
+        </speed>
+        <humanFactor>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <animationSpeak/>
+        </humanFactor>
+        <bsize>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <animationSpeak/>
+        </bsize>
+        <brightness>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <animationSpeak/>
+        </brightness>
+        <distance>
+            <people target="0.3"/>
+            <targetted target="0.3"/>
+            <qidefault target="0.3"/>
+            <animationSpeak target="0.3"/>
+        </distance>
+        <chaos1>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <!-- <touch/> -->
+            <sound/>
+            <think/>
+            <listen/>
+            <animationSpeak/>
+        </chaos1>
+        <chaosTarget1>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <!-- <touch/> -->
+            <sound/>
+            <think/>
+            <listen/>
+            <animationSpeak/>
+        </chaosTarget1>
+        <chaos2>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <!-- <touch/> -->
+            <sound/>
+            <think/>
+            <listen/>
+            <animationSpeak/>
+        </chaos2>
+        <chaosTarget2>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <!-- <touch/> -->
+            <sound/>
+            <think/>
+            <listen/>
+            <animationSpeak/>
+        </chaosTarget2>
+        <chaos3>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <!-- <touch/> -->
+            <sound/>
+            <think/>
+            <listen/>
+            <animationSpeak/>
+        </chaos3>
+        <chaosTarget3>
+            <people/>
+            <targetted/>
+            <qidefault/>
+            <!-- <touch/> -->
+            <sound/>
+            <think/>
+            <listen/>
+            <animationSpeak/>
+        </chaosTarget3>
+        <spheres nb="1" size="74" rotX="0.04" rotY="0.03" rotZ="0.025">
+            <sphere nb="4" minDist="0.9" maxDist="0.99" minSpeed="0.002" maxSpeed="0.005">
+            </sphere>
+        </spheres>
+    </layer>
+</config>

@@ -1,0 +1,71 @@
+<div id="alife-fragment">
+	<style type="text/css">
+		#download-button {
+			background-color: #dcdcdc;
+			border: 1px solid #666;
+			vertical-align: middle;
+			color:#000;
+			display: inline-blokk;
+
+			width: 250px;
+			height: 250px;
+			font-size: 25px;
+			position: absolute;
+			left: 515px;
+		}
+		#status {
+			font-size: 25px;
+			
+			/*
+			We actually give this text a fixed position for readability (so it looks like a cheap progress bar)
+			This will need to be replaced by a real progress bar.
+			*/
+			position: relative;
+			text-align: left;
+			left: 515px;
+		}
+	</style>
+	<h1>Updates</h1>
+	<br />
+	<br />
+	<div id="status">
+		Packages not up-to-date.
+	</div>
+	<br />
+		<div id="download-button">
+			Download <br/>
+			<img src="fragments/store/download.png">
+		</div>
+	<div id="buttonline">
+	</div>
+	
+	<script type="text/javascript">
+		$(function() {
+			//$("#wizard-nextbutton").html("Skip"); // We would like to distinguish whether a d/l is needed...
+			// We might want to distinguish skip and finish here
+			$("#wizard-nextbutton").removeClass("disabled");
+			// Here, the current connection status should be displayed, as well as whether a new download is needed.
+			// The icon should only be greened if an icon is needed and possible.
+			var requestedDownload = false;
+			$("#download-button").mousedown(function () {
+				if (!requestedDownload) {
+					requestedDownload = true;
+					if ($.qim) {
+						$("#status").html("[Service] ...");
+						$.getService("ALStore", function (store) {
+							$("#status").html("[Service][Download] ...");
+							store.update().done(function (language) {
+								$("#status").html("[Service][Download][Done]");
+							}).fail(function() {
+								$("#status").html("[Service][Download] failed :(");
+								log("[DBG] Failed update");
+							})
+						});
+					} else {
+						$("#status").html("(Can't download, not connected to robot)");
+					}
+				}
+			});
+		});
+	</script>
+</div>

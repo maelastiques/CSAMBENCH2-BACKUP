@@ -1,0 +1,152 @@
+<div id="network-manual-fragment">
+	<style type="text/css">
+	
+		.fragmentbutton {
+			background-color: #dcdcdc;
+			border: 2px solid #666;
+			color:#000;
+		}
+	
+		#qrbutton {
+			display: table-cell;
+
+			width: 150px;
+			height: 150px;
+			font-size: 25px;
+			
+			position: absolute;
+			right: 20px;
+			bottom: 200px;
+		}
+		
+		#networkbox {
+			border: 1px solid #666;
+			
+			width: 500px;
+			height: 250px;
+			position: absolute;
+			left: 20px;
+			
+			text-align: left;
+			
+			font-size: 25px;
+		}
+		
+		.networkname {
+			background-color: lightblue;
+			border: 1px solid #666;
+		}
+		.networkname.connected {
+			background-color: blue;
+		}
+		.networkname.selected {
+			border: 5px solid white;
+		}
+		
+		#connectbox {
+			border: 1px solid #666;
+			
+			width: 500px;
+			height: 250px;
+			position: absolute;
+			left: 540px;
+			
+			text-align: left;
+			
+			font-size: 25px;
+			
+			visibility: hidden;
+		}
+		
+		#connectbutton {
+			position: absolute;
+			right: 5px;
+			width: 150px;
+			height: 
+			
+			font-size: 30px;
+		}
+		
+	</style>
+	<h1>Network setup</h1>
+	<div id="qrbutton" class="fragmentbutton">
+		I have a <br/>
+		<img src="fragments/network/qr-phone.png" width="120"> <br/>
+		QR Code
+	</div>
+	
+	<div id="networkbox">
+		Networks:
+		<div id="networklist"></div>
+	</div>
+	
+	<div id="connectbox">
+		Connecting to <span id="SSID">?</span><br>
+		Passphrase: <input type="text" id="passphrase"></input>
+		<div id="connectbutton" class="fragmentbutton">Connect</div>
+	</div>
+	
+	<script type="text/javascript">
+		$(function() {
+			//$("#wizard-nextbutton").html("Skip");
+			$("#wizard-nextbutton").removeClass("disabled");
+			
+			$("#qrbutton").mousedown(function() {
+				loadFragment("fragments/network/network_qr.html", false);
+			});
+			
+			var selectedNetwork = undefined;
+
+			function handleNetworkClick() {
+				var clickedNetwork = $(this);
+				if (!clickedNetwork.hasClass("selected")) {
+					selectedNetwork = clickedNetwork;
+					$(".networkname.selected").removeClass("selected");
+					clickedNetwork.addClass("selected");
+					$("#connectbox").css("visibility", "visible");
+					$("#SSID").html(clickedNetwork.html());
+					$("#passphrase").val("")
+					if (clickedNetwork.hasClass("connected")) {
+						$("#connectbutton").html("Reconnect");
+					} else {
+						$("#connectbutton").html("Connect");
+					}
+				}
+			};
+			
+			function addNetwork(networkName) {
+				var div = $("<div>").addClass("networkname").html(networkName).mousedown(handleNetworkClick);
+				$("#networklist").append(div);
+				return div;
+			}
+			
+			$("#connectbutton").mousedown(function() {
+				var SSID = $("#SSID").html();
+				var passphrase = $("#passphrase").val();
+				// TODO: plug QiMessaging in here too
+				// (for now this is a graphical mockup).
+				log("TODO: Connect to " + SSID + " with " + passphrase);
+				// TODO: eventually display status, success etc.
+				// temporarily, any passphrase is considered a success.
+				if (selectedNetwork && passphrase) {
+					$(".networkname.connected").removeClass("connected");
+					selectedNetwork.addClass("connected");
+				}
+				// Hide conneciton box
+				$("#connectbox").css("visibility", "hidden");
+				// Disconnect any network
+				$(".networkname.selected").removeClass("selected");
+			});
+			
+			if (isOnRobot()) {
+				// TODO: get networks by QiMessaging
+			} else {
+				// Make fake placeholder network buttons
+				addNetwork("SomeNetwork");
+				addNetwork("MyOwnNetwork").addClass("connected");
+				addNetwork("SomeOtherNetworkNetwork");
+			}
+		});
+	</script>
+</div>
+

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" 
+		  content="width=1280, height=800,
+		  initial-scale = 1.34,
+		  minimum-scale = 1.34,
+		  maximum-scale = 1.34" />
+
+	<title>Widgets</title>
+	<link rel="stylesheet" href="stylesheets/common.css" />
+	<link rel="stylesheet" href="stylesheets/widgets.css" />
+
+	<script src="scripts/jquery.min.js"></script>
+	
+	<!--
+	Most of these are temporarily deactivated while I'm not on robot
+	<script src="/libs/qimessaging/1.0/jquery.min.js"></script>
+	-->
+	<script src="/libs/qimessaging/1.0/socket.io.min.js"></script>
+	<script src="/libs/qimessaging/1.0/qimessaging.js"></script>
+
+
+	<script src="scripts/utils_misc.js"></script>
+	<script src="scripts/utils_services.js"></script>
+	<script src="scripts/utils_jsonServerMessages.js"></script>
+	<script src="scripts/utils_widgets.js"></script>
+	
+	<script src="scripts/page_widgets.js"></script>
+</head>
+<body>
+	<div id="page">
+		<div id="contents">(w:please wait)</div>
+
+		<div id="corner-unfolded-button">
+			<img src="images/longstrip.png"/>
+			<div id="exit-button"></div>
+		</div>
+		<div id="corner-button">
+			<img src="images/shortstrip.png"/>
+		</div>
+		
+		<div id="widget-tray"></div>
+		<div id="right-widget-tray"></div>
+		<div id="wizard-tray">
+			<div id="wizard-backbutton" class="buttondiv">Back</div>
+			<div id="wizard-nextbutton" class="buttondiv">Next</div>
+		</div>
+		<div id="hidden-tray" class="hidden"></div>
+		
+		<div id="debugsplash">
+		<!--
+			These are useful for testing some events.
+			<input type="button" value="dbgsend json" id="dbgsendjson"/> 
+			<input type="button" value="dbgsend TestSubscribe" id="dbgsendsubscribe"/> 
+		-->
+
+			<input type="button" value="Day 1 Wizard" id="launchwizard"/> 
+			<input type="button" value="Widget menu" id="makefakewidgets"/> 		
+		</div>
+		<!-- 
+		<input type="button" value="Reload" onClick="document.location.reload(true)">
+		-->
+	</div>
+</body>
+</html>

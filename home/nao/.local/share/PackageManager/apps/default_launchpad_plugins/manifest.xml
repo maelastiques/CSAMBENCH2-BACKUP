@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<package typeVersion="1.0" uuid="default_launchpad_plugins" version="0.6.2" author="veltrop" date="2013-10-04T04:20:00">
+  <names>
+    <name lang="en_US">Default Launchpad Plugins</name>
+  </names>
+  <descriptions>
+    <description lang="en_US">These basic Launchpad Plugins help Autonomous Life to start activities based on the context of the environment.</description>
+  </descriptions>
+  <icons/>
+  <requirements/>
+  <contents>
+    <behaviorContent path="Network" typeVersion="1.0" />
+    <behaviorContent path="QRCode" typeVersion="1.0" />
+    <behaviorContent path="Touch" typeVersion="1.0" />
+  </contents>
+</package>

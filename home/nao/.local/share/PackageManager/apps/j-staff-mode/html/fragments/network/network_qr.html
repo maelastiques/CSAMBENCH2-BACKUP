@@ -1,0 +1,61 @@
+<div id="network-qr-fragment">
+	<style type="text/css">
+	
+		.fragmentbutton {
+			background-color: #dcdcdc;
+			border: 2px solid #666;
+			color:#000;
+		}
+	
+		#manualbutton {
+			display: table-cell;
+
+			width: 150px;
+			height: 150px;
+			font-size: 25px;
+			
+			position: absolute;
+			right: 20px;
+			bottom: 200px;
+		}
+		
+		#status {
+			font-size: 25px;
+		}
+		
+	</style>
+	<h1>Network setup</h1>
+	<div id="manualbutton" class="fragmentbutton">
+		<br/>
+		Manual  <br/>
+		setup
+	</div>
+	<img src="fragments/network/juju-14.png" height=150/>
+	<div id="status">
+		(please wait)
+	</div>
+	<img src="fragments/network/show-qr-example.jpg"/>
+	<div>
+		(the above will be the robot's video flux in the final application)
+	</div>
+	
+	<script type="text/javascript">
+		$(function() {
+			$.raiseALMemoryEvent("BootConfig/pageChanged", "network_qr");
+			if ($("#wizard-tray").is(":visible")) {
+				// In wizard mode, "back" should bring us back there
+				//$("#manualbutton").hide();
+				var manual_url = "fragments/network/network_manual.html";
+				$("#wizard-backbutton").data("customfragment", manual_url).show();
+				//$("#wizard-nextbutton").html("Skip");
+				$("#wizard-nextbutton").removeClass("disabled");
+			}
+			$("#manualbutton").mousedown(function() {
+				loadFragment("fragments/network/network_manual.html", false);
+				$.raiseALMemoryEvent("BootConfig/pageChanged", "network");
+			});
+			// Right now, just await events from the robot.
+			// Eventually: display a video stream from the robot.
+		});
+	</script>
+</div>

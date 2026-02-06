@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<package version="2.0.5" uuid=".bodytalk">
+ <names>
+  <name lang="en_US">Body language</name>
+ </names>
+ <descriptions>
+  <description lang="en_US">
+   This behavior is used by ALAnimatedSpeech. It is started at NAOqi startup but the moves are only really trigerred by Animated Speech. Please do not stop this behavior.
+  </description>
+ </descriptions>
+ <supportedLanguages>
+  <language>en_US</language>
+ </supportedLanguages>
+ <contents>
+  <behaviorContent path=".">
+   <nature></nature>
+   <names>
+    <name lang="en_US">Body language</name>
+   </names>
+   <descriptions/>
+  </behaviorContent>
+ </contents>
+</package>

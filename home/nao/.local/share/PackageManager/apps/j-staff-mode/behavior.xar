@@ -1,0 +1,1124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ChoregrapheProject xmlns="http://www.aldebaran-robotics.com/schema/choregraphe/project.xsd" xar_version="3">
+    <Box name="root" id="-1" localization="8" tooltip="Root box of Choregraphe&apos;s project. Highest level possible." x="0" y="0">
+        <bitmap>media/images/box/root.png</bitmap>
+        <script language="4">
+            <content>
+                <![CDATA[]]>
+</content>
+        </script>
+        <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
+        <Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" />
+        <Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" />
+        <Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" />
+        <Timeline enable="0">
+            <BehaviorLayer name="behavior_layer1">
+                <BehaviorKeyframe name="keyframe1" index="1">
+                    <Diagram scale="118.921">
+                        <Box name="boot-config-main" id="2" localization="8" tooltip="Enter tooltip here" x="454" y="140">
+                            <bitmap>media/images/box/box-diagram.png</bitmap>
+                            <script language="4">
+                                <content>
+                                    <![CDATA[]]>
+</content>
+                            </script>
+                            <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
+                            <Input name="InteractWithTablet_onStart" type="0" type_size="1" nature="2" inner="0" tooltip="This input has been automatically generated&#x0A;by converting several boxes into a single box." id="2" />
+                            <Input name="BootConfig/handleTrayWidget" type="0" type_size="1" nature="4" stm_value_name="BootConfig/handleTrayWidget" inner="1" tooltip="BootConfig/handleTrayWidget desc" id="3" />
+                            <Input name="BootConfig/showState" type="0" type_size="1" nature="4" stm_value_name="BootConfig/showState" inner="1" tooltip="BootConfig/showState desc" id="4" />
+                            <Input name="BootConfig/exitMenu" type="0" type_size="1" nature="4" stm_value_name="BootConfig/exitMenu" inner="1" tooltip="BootConfig/exitMenu desc" id="5" />
+                            <Output name="onStopped" type="1" type_size="1" nature="2" inner="0" tooltip="" id="6" />
+                            <Timeline enable="0">
+                                <BehaviorLayer name="behavior_layer1">
+                                    <BehaviorKeyframe name="keyframe1" index="1">
+                                        <Diagram scale="100">
+                                            <Box name="PickLanguage" id="1" localization="8" tooltip="Still WIP" x="770" y="235">
+                                                <bitmap>media/images/box/box-diagram.png</bitmap>
+                                                <script language="4">
+                                                    <content>
+                                                        <![CDATA[import time
+
+class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self)
+        self.running = False
+
+    def onUnload(self):
+        if self.running:
+            AutoEvents.unsubscribe(self)
+            self.running = False
+
+    @AutoEvents.on("BootConfig/setLanguage")
+    def handleSetLanguage(self, arg):
+        if self.running:
+            picked_language = arg.strip('"\'')
+            self.log("[BootConfig] Set language: " + picked_language)
+            speech_reco = ALProxy("ALSpeechRecognition")
+            allowed_languages = speech_reco.getAvailableLanguages() # the list from ALTextToSpeech is wrong
+            if picked_language in allowed_languages:
+                self.log("[BootConfig] Picked language: " + picked_language)
+                sayer_stop()
+                set_sayer_language(picked_language) # Will set TTC language
+                speech_reco.setLanguage(picked_language)
+                sayer_say(SPEECH_LANG_CHOSEN)
+            else:
+                self.log("[BootConfig] Invalid language: %s" % repr(picked_language))
+                sayer_stop()
+                sayer_say(SPEECH_LANG_NOT_AVAILABLE)
+                # We may still want to allow this language, only for the menu.
+
+    def onInput_onStart(self):
+        self.last_language = None
+        if not self.running:
+            sayer_say(SPEECH_WELCOME)
+            # TODO: maybe play an animation, or maybe just say something.
+            # (With QiMessaging, we could handle in js whether the language is available)
+            self.running = True
+            AutoEvents.subscribe(self)
+
+    def onInput_onStop(self):
+        self.onUnload()]]>
+</content>
+                                                </script>
+                                                <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
+                                                <Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" />
+                                                <Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" />
+                                                <Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" />
+                                            </Box>
+                                            <Box name="WaitForQRCode" id="11" localization="8" tooltip="Enter tooltip here" x="837" y="473">
+                                                <bitmap>media/images/box/box-diagram.png</bitmap>
+                                                <script language="4">
+                                                    <content>
+                                                        <![CDATA[import time
+import random
+
+class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self)
+        self.memory = ALProxy("ALMemory")
+        self.barcodeReaderProxy = ALProxy("ALBarcodeReader")
+        self.listening = False
+
+    def onUnload(self):
+        if self.listening:
+            AutoEvents.unsubscribe(self)
+            self.listening = False
+
+    def set_status(self, status):
+        self.log("[jdb] status: " + repr(status))
+        TabletUtils.customMessage(self, "BootConfig/setStatusText", status)
+
+    def onInput_onStart(self):
+        # TODO: figure out if we want to use Head Id or what.
+        self.cnonce = random.randint(1000, 9999)
+        AutoEvents.subscribe(self)
+        format = self.getParameter("videoMode")
+        formatId = int(format[0])
+        res = self.barcodeReaderProxy.setResolution(formatId)
+        self.log("[DBG] Looking for QR code with resolution: " + repr(res))
+        self.barcodeReaderProxy.setFrameRate(self.getParameter("frameRate"))
+        self.barcodeReaderProxy.subscribe(self.getName())
+        self.listening = True
+        time.sleep(1)
+        self.set_status("Please show the setup QR code; nonce = %i" % self.cnonce)
+
+    def onInput_onStop(self):
+        self.onUnload()
+
+    @AutoEvents.on("BarcodeReader/BarcodeDetected")
+    def onBarCodeEvent(self, value):
+        if not self.listening:
+            self.log("[BootConfig] Saw QR code, but not listening any more.")
+        elif value and value[0]:
+            barcodestr = value[0][0]
+            #self.log("QR Code: " + str(barcodestr))
+            decrypted = decrypt(barcodestr, self.cnonce)
+            #self.log("Decrypted: " + str(decrypted))
+            if decrypted.count(';') >= 2:
+                self.set_status("QR code received, processing...")
+                self.listening = False
+                AutoEvents.unsubscribe(self)
+                self.onStopped(decrypted)
+            else:
+                self.set_status("Invalid QR code, please show again; nonce = %i" % self.cnonce)
+                self.log("[BootConfig] Invalid QR String: " + decrypted)
+        else:
+            self.log("[BootConfig] Unexpected QR code: (%s), please show again; nonce = %i" % repr(value, self.cnonce))]]>
+</content>
+                                                </script>
+                                                <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
+                                                <Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" />
+                                                <Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" />
+                                                <Output name="onStopped" type="3" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" />
+                                                <Parameter name="videoMode" inherits_from_parent="0" content_type="3" value="2 VGA" default_value="2 VGA" custom_choice="0" tooltip="" id="5">
+                                                    <Choice value="0 QQVGA" />
+                                                    <Choice value="1 QVGA" />
+                                                    <Choice value="2 VGA" />
+                                                    <Choice value="3 4VGA" />
+                                                </Parameter>
+                                                <Parameter name="frameRate" inherits_from_parent="0" content_type="1" value="1" default_value="5" min="0" max="100" tooltip="" id="6" />
+                                            </Box>
+                                            <Box name="SetupWifi" id="12" localization="8" tooltip="Enter tooltip here" x="994" y="524">
+                                                <bitmap>C:\Program Files (x86)\Aldebaran\Choregraphe 1.22.0.83/share/choregraphe/media/images/box/box-script.png</bitmap>
+                                                <script language="4">
+                                                    <content>
+                                                        <![CDATA[import time
+
+class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self)
+        self.connectionManager = ALProxy("ALConnectionManager")
+        self.wanted_name = None
+        self.wanted_serviceId = None
+        self.passphrase = None
+
+    def find_service_by_name(self, name):
+        for service in self.connectionManager.services():
+            dic = dict(service)
+            servicename = dic.get("Name", "")
+            if servicename.lower() == name.lower():
+                return dic["ServiceId"], dic
+        self.log("[jdb] could not find service called: " + repr(name))
+        return None, {}
+
+    def find_service_by_id(self, wanted_id):
+        for service in self.connectionManager.services():
+            dic = dict(service)
+            if dic["ServiceId"] == wanted_id:
+                return dic["Name"], dic
+        self.log("[jdb] could not find service with ID: " + repr(wanted_id))
+        return None, {}
+
+    def set_status(self, status):
+        self.log("[jdb] status: " + repr(status))
+        TabletUtils.customMessage(self, "BootConfig/setStatusText", status)
+
+    def onInput_onStart(self, QRString):
+        AutoEvents.subscribe(self)
+        params = QRString.split(';', 3)
+        if len(params) == 3:
+            self.connection_step1(*params)
+        else:
+            #invalid code, ask for a new one
+            self.log("[jdb] Incorrect format: " + repr(QRString))
+
+    def connection_step1(self, name, wps, passphrase):
+        self.set_status("Looking for service...")
+        self.wanted_name = name
+        self.connectionManager.scan()
+        serviceId, dic = self.find_service_by_name(name)
+        # TODO: handle the case where I don't find the name (hidden network)
+        if serviceId:
+            self.passphrase = passphrase
+            self.set_status("Retrieved service, connecting...")
+            self.wanted_serviceId = serviceId
+            for key in ("Error", "Favorite"):
+                self.log("[jdb] service %s: %s" % (key, dic.get(key, "??!!")))
+            self.connectionManager.forget(dic["ServiceId"]) # Mostly useful for testing!
+            self.connectionManager.scan()
+            self.connectionManager.connect(dic["ServiceId"])
+            # Now wait for event
+        else:
+            self.finish("Connection Failed: couldn't find network")
+
+    @AutoEvents.on("NetworkServiceInputRequired")
+    def connection_step2(self, inputRequest):
+        if self.passphrase != None: # "" is an acceptable passphrase!
+            reqDic = dict(inputRequest)
+            self.set_status("Sending password...")
+            assert "Passphrase" in reqDic, "Surprising request!"
+            reqDic["Passphrase"] = self.passphrase
+            self.passphrase = None
+            reply = list(reqDic.items())
+            self.connectionManager.setServiceInput(reply)
+        else:
+             self.log("[jdb] Received NetworkServiceInputRequired with no passphrase!")
+
+    @AutoEvents.on("NetworkServiceStateChanged")
+    def handleNetworkStateChanged(self, param):
+        serviceId, state = param
+        name, dic = self.find_service_by_id(serviceId)
+        if serviceId == self.wanted_serviceId:
+            self.log("[jdb] %s -> %s" % (name, state))
+            if state in ("ready", "online"):
+                self.finish("Connection Succeeded!")
+            elif state == "failure":
+                error = dic.get("Error", "?!?!") # error might be invalid-key, connect-failed
+                self.finish("Connection Failed with Error: " + repr(error))
+        else:
+            self.log("[jdb] other: %s -> %s" % (name, state))
+
+    def finish(self, status):
+        AutoEvents.unsubscribe(self)
+        self.set_status("Connection Succeeded!")
+        time.sleep(4)
+        self.onStopped()]]>
+</content>
+                                                </script>
+                                                <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
+                                                <Input name="onStart" type="3" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" />
+                                                <Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" />
+                                                <Input name="fakeEvent" type="1" type_size="1" nature="1" inner="0" tooltip="" id="4" />
+                                                <Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="5" />
+                                            </Box>
+                                            <Box name="StartALife" id="13" localization="8" tooltip="Enter tooltip here" x="855" y="6">
+                                                <bitmap>C:\Program Files (x86)\Aldebaran\Choregraphe 1.22.0.83/share/choregraphe/media/images/box/box-script.png</bitmap>
+                                                <script language="4">
+                                                    <content>
+                                                        <![CDATA[class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self)
+
+    def onLoad(self):
+        pass
+
+    def onUnload(self):
+        pass
+
+    def onInput_onStart(self):
+        ALProxy("ALAutonomousLife").setState("solitary")
+        DBG_log_time("Done requesting ALife")
+        self.onStopped()
+
+    def onInput_onStop(self):
+        self.onUnload()]]>
+</content>
+                                                </script>
+                                                <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
+                                                <Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" />
+                                                <Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" />
+                                                <Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" />
+                                            </Box>
+                                            <Box name="Swith Camera Profile" id="7" localization="8" tooltip="Enter tooltip here" x="852" y="619">
+                                                <bitmap>media/images/box/box-diagram.png</bitmap>
+                                                <script language="4">
+                                                    <content>
+                                                        <![CDATA[class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self)
+        pass
+
+    def onLoad(self):
+        self.vd=ALProxy("ALVideoDevice")
+        self.ae = True #(self.vd.getParameter(0, 11) == -1)
+        self.e = 14610 #self.vd.getParameter(0, 17)
+        self.log("GET DEFAULT PARAM: ae="+str(self.ae)+" e="+str(self.e))
+        self.isCustom = False
+        #~ puts code for box initialization here
+        pass
+
+    def onUnload(self):
+        #~ puts code for box cleanup here
+        self.onInput_Default()
+
+    def onInput_Custom(self):
+        if(self.isCustom):
+            return
+        self.isCustom = True
+
+        self.ae = True #(self.vd.getParameter(0, 11) == -1)
+        self.e = 14610 #self.vd.getParameter(0, 17)
+        ae=self.getParameter("Auto-Exposure")
+        e=self.getParameter("Exposure")
+        self.log("SET CUSTOM PARAM: ae="+str(ae)+" e="+str(e))
+        self.vd.setParameter(0, 11, ae)
+        self.vd.setParameter(0, 17, e)
+        #~ self.onStopped() #~ activate output of the box
+        pass
+
+    def onInput_Default(self):
+        self.isCustom=False
+        self.log("SET DEFAULT PARAM: ae="+str(self.ae)+" e="+str(self.e))
+        self.vd.setParameter(0, 17, self.e)
+        self.vd.setParameter(0, 11, self.ae)
+        self.onStopped()
+        pass]]>
+</content>
+                                                </script>
+                                                <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
+                                                <Input name="Custom" type="1" type_size="1" nature="1" inner="0" tooltip="" id="2" />
+                                                <Input name="Default" type="1" type_size="1" nature="1" inner="0" tooltip="" id="3" />
+                                                <Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" />
+                                                <Parameter name="Auto-Exposure" inherits_from_parent="0" content_type="0" value="0" default_value="1" tooltip="" id="5" />
+                                                <Parameter name="Exposure" inherits_from_parent="0" content_type="1" value="5000" default_value="0" min="0" max="1048576" tooltip="" id="6" />
+                                            </Box>
+                                            <Box name="ConfigManager" id="5" localization="8" tooltip="Enter tooltip here" x="490" y="233">
+                                                <bitmap>C:\Program Files (x86)\Aldebaran\Choregraphe 1.22.0.100/share/choregraphe/media/images/box/box-script.png</bitmap>
+                                                <script language="4">
+                                                    <content>
+                                                        <![CDATA[import time
+
+_CONFIG_MANAGER = None
+
+class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self)
+        self.configStates = {}
+        self.waitingInMenu = False
+        ALProxy("ALMemory").declareEvent("StaffMode/EULAAccepted")
+        global _CONFIG_MANAGER
+        _CONFIG_MANAGER = self
+
+    def set_status(self, status):
+        self.log("Boot config status: " + repr(status))
+        TabletUtils.customMessage(self, "setText", status) # This should eventually write to ALMemory
+
+    def onUnload(self):
+        self.waitingInMenu = False;
+        AutoEvents.unsubscribe(self)
+
+    def displayMenu_old(self):
+        # This whole function is deprecated! Now the flow is mostly driven by the tablet...
+        DBG_log_time("Displaying main menu...")
+        time.sleep(1) # TODO: investigate weird bug whereas this isn't sent...
+        TabletUtils.setUrl(self, "index.html")
+        # TODO: open covers on tablet
+        self.waitingInMenu = True
+
+        time.sleep(1) # So that all config states registered, and the page on the tablet is done loading.
+        # Possibly, wait for all config states to be ready (for some like network that need a callback)
+        widgets = []
+        for widgetName, configState in sorted(self.configStates.iteritems()):
+            #label = configState.getLabel()
+            #if label:
+            #    buttons.append((configName, label, configState.isAvailable()))
+            # Otherwise, that config state is not available from the menu.
+
+            # This is a relative path, we might want an absolute path (that includes the app name)
+            widgetUrl = "traywidgets/%s/%s.html" % (widgetName, widgetName)
+            buttonState = "available" if configState.isAvailable() else "unavailable"
+            # TODO: once the widget page is there all the time, make the first one selected.
+            iconState = configState.getIconState()
+            TabletUtils.customMessage(self, "BootConfig/addWidget", widgetUrl, buttonState, iconState)
+            self.log("requested: " + widgetUrl)
+
+        for seconds_left in reversed(range(1, 20)):
+            time.sleep(1)
+            if self.waitingInMenu:
+                self.set_status("Autonomous life will start in: %i" % seconds_left)
+            else:
+                # Someone clicked on a menu, forget all this!
+                return
+        # Time elapsed, skip to ALife
+        TabletUtils.setUrl(self, "empty.html")
+        self.waitingInMenu = False
+        DBG_log_time("Timeout expired, launching ALife")
+        self.runConfigState("alife")
+
+    def onInput_onStart(self):
+        self.log("[jdb] First start...")
+        AutoEvents.subscribe(self)
+        self.configStates = {}
+        self.log("Activating: " + repr(self.configStates))
+        self.activateConfigStates()
+        time.sleep(1) # Wait for everyone to be done registering
+        self.currentConfigName = None
+        #if not ALProxy("ALMemory").getData("StaffMode/EULAAccepted"):
+        wizardMode = True
+        if wizardMode:
+            #TabletUtils.customMessage(self, "BootConfig/showState", "menu")
+            TabletUtils.customMessage(self, "BootConfig/showState", "wizard")
+        else:
+            TabletUtils.customMessage(self, "BootConfig/showState", "menu")
+
+    def onInput_onStateDone(self):
+        pass
+
+    def onInput_onStop(self):
+        self.waitingInMenu = False;
+        AutoEvents.unsubscribe(self)
+        for state in self.configStates.values():
+            state.onStopped()
+
+    @AutoEvents.on("BootConfig/pageChanged")
+    def handlePageChanged(self, configName):
+        self.log("[jdb] changed page: %s" % configName)
+        if configName:
+            configName = configName.strip('"\'')
+        if self.currentConfigName != configName:
+            self.stopConfigState(self.currentConfigName)
+            self.currentConfigName = configName
+            self.runConfigState(configName)
+
+    @AutoEvents.on("BootConfig/exitMenu")
+    def handleExitMenu(self, arg):
+        self.log("[jdb] received exit touch: " + arg)
+        self.onStopped();
+
+    @AutoEvents.on("BootConfig/wizardDone")
+    def handleWizardDone(self, arg):
+        self.log("[boot-conf] Wizard done.")
+        # TODO: Save the fact that the wizard is done somewhere under EULA accepted.
+        #time.sleep(1) # Actually, it should go there itself!
+        #TabletUtils.customMessage(self, "BootConfig/showState", "menu")
+
+    def runConfigState(self, configName):
+        if configName:
+            DBG_log_time("Running config state: %s" % configName)
+            assert configName in self.configStates, "Requesting a non-existing config state: " + str(configName)
+            self.configStates[configName].onTriggered()
+
+    def stopConfigState(self, configName):
+        if configName:
+            DBG_log_time("Stopping config state: " + configName)
+            assert configName in self.configStates, "Requesting a non-existing config state: " + str(configName)
+            self.configStates[configName].onStopped()
+
+# This will be instantiated in boxes subclassing the following:
+
+class ConfigState:
+    def onInput_onStart(self):
+        # Register in config manager's dictionary (label could come from parameters)
+        dic = _CONFIG_MANAGER.configStates
+        assert self.name not in dic, "Already registered a config state called %s " + str(self.name)
+        dic[self.name] = self]]>
+</content>
+                                                </script>
+                                                <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
+                                                <Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" />
+                                                <Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" />
+                                                <Input name="onStateDone" type="1" type_size="1" nature="1" inner="0" tooltip="" id="4" />
+                                                <Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="5" />
+                                                <Output name="activateConfigStates" type="1" type_size="1" nature="2" inner="0" tooltip="" id="6" />
+                                            </Box>
+                                            <Box name="LanguageConfigState" id="6" localization="8" tooltip="Enter tooltip here" x="633" y="236">
+                                                <bitmap>C:\Program Files (x86)\Aldebaran\Choregraphe 1.22.0.100/share/choregraphe/media/images/box/box-script.png</bitmap>
+                                                <script language="4">
+                                                    <content>
+                                                        <![CDATA[class MyClass(GeneratedClass, ConfigState):
+    #name = "1picklanguage"
+    name = "language"
+
+    def getLabel(self):
+        return "Change Language<br/>Current: %s" % get_sayer_language()
+
+    def isAvailable(self):
+        return True
+
+    def getIconState(self):
+        return get_sayer_language()]]>
+</content>
+                                                </script>
+                                                <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
+                                                <Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" />
+                                                <Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" />
+                                                <Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" />
+                                                <Output name="onTriggered" type="1" type_size="1" nature="2" inner="0" tooltip="" id="5" />
+                                            </Box>
+                                            <Box name="QRWifiConfigState" id="16" localization="8" tooltip="Enter tooltip here" x="646" y="495">
+                                                <bitmap>C:\Program Files (x86)\Aldebaran\Choregraphe 1.22.0.133/share/choregraphe/media/images/box/box-diagram.png</bitmap>
+                                                <script language="4">
+                                                    <content>
+                                                        <![CDATA[class MyClass(GeneratedClass, ConfigState):
+    name = "network_qr"
+
+    def getLabel(self):
+        return "Setup Wifi"
+
+    def isAvailable(self):
+        return ALProxy("ALMemory").getData("StaffMode/EULAAccepted")
+
+    def getIconState(self):
+        return "connected"]]>
+</content>
+                                                </script>
+                                                <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
+                                                <Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" />
+                                                <Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" />
+                                                <Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" />
+                                                <Output name="onTriggered" type="1" type_size="1" nature="2" inner="0" tooltip="" id="5" />
+                                            </Box>
+                                            <Box name="StoreConfigState" id="17" localization="8" tooltip="Enter tooltip here" x="648" y="700">
+                                                <bitmap>C:\Program Files (x86)\Aldebaran\Choregraphe 1.22.0.100/share/choregraphe/media/images/box/box-script.png</bitmap>
+                                                <script language="4">
+                                                    <content>
+                                                        <![CDATA[class MyClass(GeneratedClass, ConfigState):
+    name = "store"
+
+    def getLabel(self):
+        # It would be nice if we could know whether this was needed...
+        return "Store Update"
+
+    def isAvailable(self):
+        # TODO: get as function of Wifi
+        return ALProxy("ALMemory").getData("StaffMode/EULAAccepted")
+
+    def getIconState(self):
+        if self.isAvailable():
+        # TODO: check connection
+            return "unavailable"
+        elif True: # TODO (when implemented): check store status
+            return "needed"
+        else:
+            return "up_to_date" # We cannot detect this state yet.]]>
+</content>
+                                                </script>
+                                                <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
+                                                <Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" />
+                                                <Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" />
+                                                <Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" />
+                                                <Output name="onTriggered" type="1" type_size="1" nature="2" inner="0" tooltip="" id="5" />
+                                            </Box>
+                                            <Box name="SetApplication" id="20" localization="8" tooltip="Enter tooltip here" x="296" y="114">
+                                                <bitmap>C:\Program Files (x86)\Aldebaran\Choregraphe 1.22.0.83/share/choregraphe/media/images/box/box-script.png</bitmap>
+                                                <script language="4">
+                                                    <content>
+                                                        <![CDATA[import time
+class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self)
+
+    def onLoad(self):
+        pass
+
+    def onUnload(self):
+        pass
+
+    def onInput_onStart(self):
+        DBG_log_time("Requesting application")
+        if TabletUtils.setApplication(self):
+            DBG_log_time("Done requesting application, waiting 10 seconds ...")
+            time.sleep(2) # The call is blocking
+            DBG_log_time("... done waiting.")
+        else:
+            DBG_log_time("Application request failed, not waiting.")
+        self.onStopped()
+
+    def onInput_onStop(self):
+        self.onUnload()]]>
+</content>
+                                                </script>
+                                                <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
+                                                <Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" />
+                                                <Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" />
+                                                <Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" />
+                                            </Box>
+                                            <Box name="WakeUp" id="21" localization="0" tooltip="Call a Wake Up process.&#x0A;Stiff all joints and apply stand Init posture if the robot is Stand" x="294" y="15">
+                                                <bitmap>media/images/box/movement/stiffness.png</bitmap>
+                                                <script language="4">
+                                                    <content>
+                                                        <![CDATA[class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self)
+        pass
+
+    def onLoad(self):
+        self.motion = ALProxy("ALMotion")
+        pass
+
+    def onUnload(self):
+        pass
+
+    def onInput_onStart(self):
+        self.motion.wakeUp()
+        self.onStopped() #~ activate output of the box
+        pass
+
+    def onInput_onStop(self):
+        self.onUnload() #~ it is recommended to call onUnload of this box in a onStop method, as the code written in onUnload is used to stop the box as well
+        pass]]>
+</content>
+                                                </script>
+                                                <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
+                                                <Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" />
+                                                <Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" />
+                                                <Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" />
+                                            </Box>
+                                            <Box name="WifiConfigState" id="9" localization="8" tooltip="Enter tooltip here" x="642" y="346">
+                                                <bitmap>C:\Program Files (x86)\Aldebaran\Choregraphe 1.22.0.100/share/choregraphe/media/images/box/box-script.png</bitmap>
+                                                <script language="4">
+                                                    <content>
+                                                        <![CDATA[class MyClass(GeneratedClass, ConfigState):
+    name = "network"
+
+    def getLabel(self):
+        return "Setup Wifi"
+
+    def isAvailable(self):
+        return ALProxy("ALMemory").getData("StaffMode/EULAAccepted")
+
+    def getIconState(self):
+        return "connected"]]>
+</content>
+                                                </script>
+                                                <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
+                                                <Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" />
+                                                <Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" />
+                                                <Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" />
+                                                <Output name="onTriggered" type="1" type_size="1" nature="2" inner="0" tooltip="" id="5" />
+                                            </Box>
+                                            <Box name="RunStoreUpdate" id="19" localization="8" tooltip="Still WIP" x="978" y="708">
+                                                <bitmap>media/images/box/box-diagram.png</bitmap>
+                                                <script language="4">
+                                                    <content>
+                                                        <![CDATA[import time
+
+class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self)
+        self.running = False
+
+    def onLoad(self):
+        pass
+
+    def onUnload(self):
+        self.running = False
+
+    def set_status(self, status):
+        self.log("[jdb] status: " + repr(status))
+        TabletUtils.customMessage(self, "setText", status) # This should eventually write to ALMemory
+
+    def onInput_onStart(self):
+        # TODO: register for messages, eventually exit.
+        # Also, handle progress and all that when it will be implemente.
+        pass
+
+    def onInput_onStart_OLD(self):
+        # TODO: have a clean system once we have a full ALStore API
+        self.set_status("Downloading updates from store, we don't know when it will be finished...")
+        DBG_log_time("Starting ALStore.u()pdate...")
+        #ALProxy("ALStore").update()
+        DBG_log_time("ALStore.update() done.")
+        time.sleep(5)
+        self.onStopped() # Will return to index
+
+
+    def onInput_onStop(self):
+        self.onUnload()]]>
+</content>
+                                                </script>
+                                                <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
+                                                <Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" />
+                                                <Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" />
+                                                <Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" />
+                                            </Box>
+                                            <Box name="OrientationConfigState" id="14" localization="8" tooltip="Enter tooltip here" x="634" y="808">
+                                                <bitmap>C:\Program Files (x86)\Aldebaran\Choregraphe 1.22.0.133/share/choregraphe/media/images/box/box-diagram.png</bitmap>
+                                                <script language="4">
+                                                    <content>
+                                                        <![CDATA[class MyClass(GeneratedClass, ConfigState):
+    name = "orientation"
+
+    def getLabel(self):
+        return "Orientation"
+
+    def isAvailable(self):
+        return True
+
+    def getIconState(self):
+        return "available"]]>
+</content>
+                                                </script>
+                                                <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
+                                                <Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" />
+                                                <Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" />
+                                                <Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" />
+                                                <Output name="onTriggered" type="1" type_size="1" nature="2" inner="0" tooltip="" id="5" />
+                                            </Box>
+                                            <Box name="Utils" id="18" localization="8" tooltip="Enter tooltip here" x="89" y="56">
+                                                <bitmap>media/images/box/box-diagram.png</bitmap>
+                                                <script language="4">
+                                                    <content>
+                                                        <![CDATA[]]>
+</content>
+                                                </script>
+                                                <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
+                                                <Input name="SpeechUtils_onStart" type="0" type_size="1" nature="2" inner="0" tooltip="This input has been automatically generated&#x0A;by converting several boxes into a single box." id="2" />
+                                                <Output name="EventUtils_onStopped" type="0" type_size="1" nature="2" inner="0" tooltip="This output has been automatically generated&#x0A;by converting several boxes into a single box." id="3" />
+                                                <Timeline enable="0">
+                                                    <BehaviorLayer name="behavior_layer1">
+                                                        <BehaviorKeyframe name="keyframe1" index="1">
+                                                            <Diagram>
+                                                                <Box name="TabletUtils" id="2" localization="8" tooltip="General utility module" x="90" y="103">
+                                                                    <bitmap>media/images/box/box-diagram.png</bitmap>
+                                                                    <script language="4">
+                                                                        <content>
+                                                                            <![CDATA[import json
+import os
+
+import time
+
+import urllib
+import urlparse
+
+def DBG_log_time(_status):
+    ALProxy("ALLogger").info("[BootCrg]", "%s: %s" % (time.asctime(), _status))
+
+# This is basically a way to make a python object (a class actually) that behaves like a Python module, without having
+# to touch the python path, and without polluting the global namespace.
+class TabletUtils:
+
+    # Internal, helper functions
+
+    _APPS_FOLDER_FRAGMENT = os.path.join("PackageManager", "apps") # The resulting path should appear in application paths
+
+    @staticmethod
+    def _getAppName(box):
+        behaviorId = box.behaviorId
+        behaviorPath = os.path.normpath(ALFrameManager.getBehaviorPath(behaviorId))
+        assert TabletUtils._APPS_FOLDER_FRAGMENT in behaviorPath
+        fragment = behaviorPath.split(TabletUtils._APPS_FOLDER_FRAGMENT, 1)[1]
+        appName = fragment.lstrip("\\/")
+        if appName == ".lastUploadedChoregrapheBehavior":
+            # Ugly, risky, but functional
+            # (in principle, it should be possible to open the manifest file ... but that's evil.)
+            appName = "j-staff-mode"
+        return appName
+
+    @staticmethod
+    def _adaptURL(box, partialURL):
+        subPath = os.path.join(TabletUtils._getAppName(box), os.path.normpath(partialURL).lstrip("\\/"))
+        return "/apps/" + subPath.replace(os.path.sep, "/")
+
+    @staticmethod
+    def _sendMessage(message, *args):
+        message = json.dumps({
+            "event": message,
+            "value": args
+        })
+        ALMemory.raiseEvent("JSONSERVER-OUT", message)
+
+    @staticmethod
+    def _add_to_url_query(url, key, value):
+        fragments = list(urlparse.urlparse(url))
+        query = fragments[4]
+        if query:
+            query += "&"
+        fragments[4] = query + urllib.urlencode([(key, value)])
+        return urlparse.ParseResult(*fragments).geturl()
+
+    # Public interface
+
+    @staticmethod
+    def getTabletService():
+        try:
+            return ALProxy("ALTabletService")
+        except RuntimeError:
+            return None
+
+    @staticmethod
+    def setApplication(box):
+        tabletService = TabletUtils.getTabletService()
+        appName = TabletUtils._getAppName(box)
+        if tabletService:
+            if tabletService.loadApplication(appName):
+                # I could log a real error out of this, cause it's not normal...
+                box.log("[DBG] Successfully set application: %s" % appName)
+                return True
+            else:
+                box.log("[Warning] Got tablet service, but failed to set application: %s" % appName)
+                return False
+        else:
+            box.log("[DBG] Couldn't find tablet service, so can't set application: %s" % appName)
+            return False
+
+    @staticmethod
+    def playVideo(box, videoPath):
+        # TODO: if we have a service, call the service instead.
+        fullUrl = TabletUtils._adaptURL(box, videoPath)
+        TabletUtils._sendMessage("playVideo", fullUrl)
+
+    @staticmethod
+    def setUrl(box, subUrl):
+        fullUrl = TabletUtils._adaptURL(box, subUrl)
+        #temp: add server IP address to preferences
+        ttcIp = "10.0.253.191" # TODO: get this from preferences (or something else) (this is Florence's server)
+        fullUrl = TabletUtils._add_to_url_query(fullUrl, "ttcIp", ttcIp)
+        TabletUtils._sendMessage("setUrl", fullUrl)
+        box.log("[DBG] sent setURL = " + fullUrl);
+
+    @staticmethod
+    def customMessage(box, key, value, *args): # This could be in QiMessaging
+        #box.log("[DBG] sent custom %s:%s" %(key, value))
+        TabletUtils._sendMessage(key, value, *args)
+
+# Below is mostly unneeded
+class MyClass(GeneratedClass):
+    def onInput_onStart(self):
+        #self.log("[DBG] what is " + repr(ALMemory.raiseEvent));
+        #self.log("[DBG] URL of: " + repr(tablet_getURL(self, "/html/test.html")))
+        self.onStopped()]]>
+</content>
+                                                                    </script>
+                                                                    <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
+                                                                    <Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" />
+                                                                    <Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" />
+                                                                    <Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" />
+                                                                </Box>
+                                                                <Box name="EventUtils" id="3" localization="8" tooltip="Enter tooltip here" x="98" y="286">
+                                                                    <bitmap>C:\Program Files (x86)\Aldebaran\Choregraphe 1.22.0.83/share/choregraphe/media/images/box/box-script.png</bitmap>
+                                                                    <script language="4">
+                                                                        <content>
+                                                                            <![CDATA[import functools
+class AutoEvents:
+    @staticmethod
+    def on(listenedEventName): #  A decorator for magically adding callbacks
+        def decorator(func):
+            @functools.wraps(func)
+            def customCallback(self, eventName, param):
+                try:
+                    func(self, param)
+                except Exception as e: # Because errors in callbacks don't work
+                    self.logger.error("AutoCallback(%s): %s" % (func.__name__, repr(e)))
+            customCallback._listenedEventName = listenedEventName
+            return customCallback
+        return decorator
+
+    @staticmethod
+    def subscribe(box):
+        #box.log("[jdb] subscribing for box: " + repr(box))
+        memory = ALProxy("ALMemory")
+        for funcName in dir(box):
+            func = getattr(box, funcName)
+            if callable(func) and hasattr(func, "_listenedEventName"):
+                memory.subscribeToMicroEvent(func._listenedEventName , box.getName(), "", funcName)
+                #box.log("[jdb] subscribed to %s: %s" %(func._listenedEventName, funcName))
+            #elif callable(func):
+            #    box.log("[jdb] callable but: " + funcName)
+        #box.log("[jdb] done subscribing for box: " + repr(box))
+
+
+    @staticmethod
+    def unsubscribe(box):
+        memory = ALProxy("ALMemory")
+        for funcName in dir(box):
+            func = getattr(box, funcName)
+            if callable(func) and hasattr(func, "_listenedEventName"):
+                try:
+                    memory.unsubscribeToMicroEvent(func._listenedEventName , box.getName())
+                except Exception as e:
+                    box.log("Exception in unsubscribe: " + str(e))
+
+# Boilerplate
+
+class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self)
+
+    def onInput_onStart(self):
+        self.onStopped()]]>
+</content>
+                                                                    </script>
+                                                                    <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
+                                                                    <Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" />
+                                                                    <Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" />
+                                                                    <Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" />
+                                                                </Box>
+                                                                <Box name="DecryptUtils" id="4" localization="8" tooltip="Enter tooltip here" x="92" y="193">
+                                                                    <bitmap>C:\Program Files (x86)\Aldebaran\Choregraphe 1.22.0.83/share/choregraphe/media/images/box/box-script.png</bitmap>
+                                                                    <script language="4">
+                                                                        <content>
+                                                                            <![CDATA[import itertools
+
+def _iter_xor(msg, keystream):
+    for char, key in itertools.izip(msg, itertools.cycle(keystream)):
+        yield chr(ord(char) ^ ord(key))
+
+def _crypt(msg, keystream):
+    if keystream:
+        return ''.join(_iter_xor(msg, keystream))
+    else:
+        return msg
+
+KEYSTREAMS = [(False, None),
+              (False,
+               '\x11\x19%%<v\'L\x06%_\x13b|l0tjv?p5(RQEI\x1a:Z\x08ZAc_L\x06.\
+\x00-\x12wD% r;w\x0cW\\[Em\x7f04%\x1fKG\x00Ypy\x0e\x10{n\'\'u\x06exKCR^")Ji\
+:lr>mmhB^\x13UW\x7f,]7\x10'),
+              (True,
+               ",P9W\x15uRx\x10Yb'w(O\x12R\x04B\x7fF:s='\x12k1{\x14au\
+\x01w;\x05\x11PY\x1adr6\x05k\x1bAi\x1db\x01?[<W\x12\\zr_\x1f\x1fk2QJ\x11XuX_\
+^J\x171\rb1y\x067\x1cmn\tF$?W/;\x1c_L\r)"),
+              ]
+
+def _modulo_shift_string(s, n):
+    m = n % len(s)
+    return s[m:] + s[:m]
+
+def _getkey(key_index, cnonce):
+    use_nonce, key = KEYSTREAMS[key_index]
+    if use_nonce:
+        key = ''.join(_iter_xor(key, str(cnonce)))
+        key = _modulo_shift_string(key, cnonce)
+    return key
+
+def encrypt(msg, kind, cnonce=None):
+    return chr(kind) + _crypt(msg, _getkey(kind, cnonce))
+
+def decrypt(msg, cnonce=None):
+    return _crypt(msg[1:], _getkey(ord(msg[0]), cnonce))
+
+# Useless boilerplate:
+class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self)
+
+    def onInput_onStart(self):
+        self.onStopped()]]>
+</content>
+                                                                    </script>
+                                                                    <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
+                                                                    <Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" />
+                                                                    <Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" />
+                                                                    <Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" />
+                                                                </Box>
+                                                                <Box name="SpeechUtils" id="10" localization="8" tooltip="Enter tooltip here" x="89" y="13">
+                                                                    <bitmap>media/images/box/box-diagram.png</bitmap>
+                                                                    <script language="4">
+                                                                        <content>
+                                                                            <![CDATA[import time
+
+# This could be put in an external module, after which we could append the sys.path with:
+# ALFrameManager.getBehaviorPath(self.behaviorId)
+
+##########################################
+# Texts
+##########################################
+
+SPEECH_WELCOME  = ["Welcome", "Bienvenue", "Konichiwa"]
+SPEECH_PICK_A_LANGUAGE  = ["Pick a language", "Choisissez une langue.", "nan deska"]
+SPEECH_LANG_CHOSEN  = ["You have chose: English", "Vous avez choisi: le Francais", "Nihongo desu"] #Yes, my Japanese sucks.
+SPEECH_LANG_NOT_AVAILABLE  = ["Sorry, that language is not available", "Ce language n'est pas disponible", "iie"]
+
+LANGUAGES = ["English", "French", "Japanese"]
+
+##########################################
+# Sayer stuff (global, to move)
+# The sayer only keeps the language it was given at init.
+##########################################
+
+class Sayer:
+    def __init__(self):
+        self.tts = ALProxy('ALTextToSpeech')
+        self.langIndex = LANGUAGES.index(self.tts.getLanguage())
+        self.ttsStop = ALProxy('ALTextToSpeech', True) #Create another proxy as wait is blocking if audioout is remote
+        self.id = None
+
+    def say_raw(self, line, **kwargs): #kwargs are not actually used...
+        assert self.id == None, "Saying a sentence while one is already running!"
+        try:
+            speed=100
+            shaping=100
+            sentence = "\RSPD=%i\ \VCT=%i\ %s \RST\ " % (speed, shaping, line)
+            self.id = self.tts.post.say(sentence)
+            self.tts.wait(self.id, 0)
+        finally:
+            self.id = None
+
+    def say(self, lines, **kwargs):
+        self.say_raw(lines[self.langIndex] % kwargs)
+
+    def stop(self):
+        if self.id != None:
+            try:
+                self.ttsStop.stop(self.id)
+            except:
+                pass
+            while( self.id != None ):
+                time.sleep( 0.2 )
+
+    def set_language(self, language):
+        if language in self.tts.getSupportedLanguages():
+            self.tts.setLanguage(language)
+            self.langIndex = LANGUAGES.index(self.tts.getLanguage())
+            return True
+        return False
+
+global g_sayer
+g_sayer = None
+
+def _get_sayer():
+    global g_sayer
+    if g_sayer == None:
+        g_sayer = Sayer()
+    return g_sayer
+
+def sayer_say(lines, **kwargs):
+    _get_sayer().say(lines, **kwargs)
+
+def sayer_say_raw(line):
+    _get_sayer().say_raw(line)
+
+def sayer_stop():
+    _get_sayer().stop()
+
+def get_sayer_language():
+    return _get_sayer().tts.getLanguage()
+
+def get_all_sayer_languages():
+    return _get_sayer().tts.getSupportedLanguages()
+
+def set_sayer_language(language):
+    return _get_sayer().set_language(language)
+
+##########################################
+# This is not actually used.
+##########################################
+
+class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self)
+        pass
+
+    def onLoad(self):
+        pass
+
+    def onUnload(self):
+        pass
+
+    def onInput_onStart(self):
+        self.onStopped()
+
+    def onInput_onStop(self):
+        self.onUnload()]]>
+</content>
+                                                                    </script>
+                                                                    <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
+                                                                    <Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" />
+                                                                    <Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" />
+                                                                    <Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" />
+                                                                </Box>
+                                                                <Link inputowner="2" indexofinput="2" outputowner="10" indexofoutput="4" />
+                                                                <Link inputowner="4" indexofinput="2" outputowner="2" indexofoutput="4" />
+                                                                <Link inputowner="3" indexofinput="2" outputowner="4" indexofoutput="4" />
+                                                                <Link inputowner="10" indexofinput="2" outputowner="0" indexofoutput="2" />
+                                                                <Link inputowner="0" indexofinput="3" outputowner="3" indexofoutput="4" />
+                                                            </Diagram>
+                                                        </BehaviorKeyframe>
+                                                    </BehaviorLayer>
+                                                </Timeline>
+                                            </Box>
+                                            <Link inputowner="18" indexofinput="2" outputowner="0" indexofoutput="2" />
+                                            <Link inputowner="0" indexofinput="6" outputowner="13" indexofoutput="4" />
+                                            <Link inputowner="12" indexofinput="2" outputowner="11" indexofoutput="4" />
+                                            <Link inputowner="6" indexofinput="2" outputowner="5" indexofoutput="6" />
+                                            <Link inputowner="1" indexofinput="2" outputowner="6" indexofoutput="5" />
+                                            <Link inputowner="16" indexofinput="2" outputowner="5" indexofoutput="6" />
+                                            <Link inputowner="11" indexofinput="2" outputowner="16" indexofoutput="5" />
+                                            <Link inputowner="7" indexofinput="2" outputowner="16" indexofoutput="5" />
+                                            <Link inputowner="17" indexofinput="2" outputowner="5" indexofoutput="6" />
+                                            <Link inputowner="5" indexofinput="2" outputowner="20" indexofoutput="4" />
+                                            <Link inputowner="1" indexofinput="3" outputowner="6" indexofoutput="4" />
+                                            <Link inputowner="11" indexofinput="3" outputowner="16" indexofoutput="4" />
+                                            <Link inputowner="7" indexofinput="3" outputowner="16" indexofoutput="4" />
+                                            <Link inputowner="12" indexofinput="3" outputowner="16" indexofoutput="4" />
+                                            <Link inputowner="9" indexofinput="2" outputowner="5" indexofoutput="6" />
+                                            <Link inputowner="19" indexofinput="3" outputowner="17" indexofoutput="4" />
+                                            <Link inputowner="19" indexofinput="2" outputowner="17" indexofoutput="5" />
+                                            <Link inputowner="14" indexofinput="2" outputowner="5" indexofoutput="6" />
+                                            <Link inputowner="20" indexofinput="2" outputowner="18" indexofoutput="3" />
+                                            <Link inputowner="13" indexofinput="2" outputowner="5" indexofoutput="5" />
+                                            <Link inputowner="21" indexofinput="2" outputowner="18" indexofoutput="3" />
+                                        </Diagram>
+                                    </BehaviorKeyframe>
+                                </BehaviorLayer>
+                            </Timeline>
+                        </Box>
+                        <Link inputowner="0" indexofinput="4" outputowner="2" indexofoutput="6" />
+                        <Link inputowner="2" indexofinput="2" outputowner="0" indexofoutput="2" />
+                    </Diagram>
+                </BehaviorKeyframe>
+            </BehaviorLayer>
+        </Timeline>
+    </Box>
+</ChoregrapheProject>

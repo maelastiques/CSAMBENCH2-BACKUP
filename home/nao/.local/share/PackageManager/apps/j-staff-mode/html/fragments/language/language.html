@@ -1,0 +1,59 @@
+<div class="fragment">
+	<style type="text/css">
+	.fragment > img.flag {
+		width: 350px;
+		border: 8px solid lightgrey;
+	}
+	
+	.fragment > img.flag.selected {
+		border-color:black;
+	}
+
+	.fragment > img.flag.nonselected {
+		opacity: 0.5;
+	}
+	
+	</style>
+	<h1>Language</h1>
+	<img class="flag" data-lang="Japanese" src="images/Flag_Japanese.png" />
+	<img class="flag" data-lang="English" src="images/Flag_English.png" />
+	<br />
+	<img class="flag" data-lang="French" src="images/Flag_French.png" />
+	<img class="flag" data-lang="Chinese" src="images/Flag_Chinese.png" />
+	<script type="text/javascript">
+		$(function() {
+			function selectFlag(flagDiv) {
+				$(".flag").removeClass("selected").addClass("nonselected");
+				flagDiv.addClass("selected").removeClass("nonselected");
+				$("#wizard-nextbutton").removeClass("disabled");
+			}
+			
+			if ($.qim) {
+				$.getService("ALTextToSpeech", function (tts) {
+					tts.getLanguage().done(function (language) {
+						$(".flag").each(function() {
+							if ($(this).data("lang") == language) {
+								selectFlag($(this));
+								return false;
+							}
+						});
+					}).fail(function() {
+						log("[DBG] Failed getting language");
+					})
+				});
+			} else {
+				log("[DBG] No QiMessaging, can't get language");
+			}
+			
+			// Register click on flags
+			$(".fragment > .flag").mousedown(function() {
+				if (!$(this).hasClass("selected")) {
+					var language = $(this).data("lang")
+					$.raiseALMemoryEvent("BootConfig/setLanguage", language);
+					selectFlag($(this));
+					$("#language-traywidget").setIconState(language);
+				}
+			});
+		});
+	</script>
+</div>

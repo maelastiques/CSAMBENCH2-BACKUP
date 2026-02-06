@@ -1,0 +1,37 @@
+<package uuid="j-tablet-browser" version="2.3.69">
+  <names>
+    <name lang="en_US">j-tablet-browser</name>
+  </names>
+  <descriptions>
+    <description lang="en_US">
+    Android application using QiMessaging Java bindings to provide a 'TabletManager' NAOqi module.
+    Its main activity provides a web widget, allowing web application launching from behaviors.
+   </description>
+  </descriptions>
+  <supportedLanguages>
+    <language>en_US</language>
+    <language>ar_SA</language>
+    <language>pt_BR</language>
+    <language>zh_CN</language>
+    <language>cs_CZ</language>
+    <language>da_DK</language>
+    <language>nl_NL</language>
+    <language>fi_FI</language>
+    <language>fr_FR</language>
+    <language>de_DE</language>
+    <language>it_IT</language>
+    <language>ja_JP</language>
+    <language>ko_KR</language>
+    <language>pl_PL</language>
+    <language>pt_PT</language>
+    <language>ru_RU</language>
+    <language>es_ES</language>
+    <language>sv_SE</language>
+    <language>tr_TR</language>
+  </supportedLanguages>
+  <contents>
+    <behaviorContent path=".">
+      <nature />
+    </behaviorContent>
+  </contents>
+</package>

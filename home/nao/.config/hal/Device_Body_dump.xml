@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ModulePreference name="aldebaran-robotics.com@Hal" xmlns="http://www.aldebaran-robotics.com/ns/ALPreference" schemaLocation="ModulePreference.xsd">
+    <Preference name="Key1" memoryName="RobotConfig/Body/BaseVersion" description="" value="DVT2" type="string" />
+    <Preference name="Key2" memoryName="RobotConfig/Body/Device/Hand/Left/Version" description="" value="4" type="string" />
+    <Preference name="Key3" memoryName="RobotConfig/Body/Device/Hand/Right/Version" description="" value="4" type="string" />
+    <Preference name="Key4" memoryName="RobotConfig/Body/Device/LeftArm/Version" description="" value="4" type="string" />
+    <Preference name="Key5" memoryName="RobotConfig/Body/Device/RightArm/Version" description="" value="4" type="string" />
+    <Preference name="Key6" memoryName="RobotConfig/Body/Device/Legs/Version" description="" value="4" type="string" />
+    <Preference name="Key7" memoryName="RobotConfig/Body/Device/Wheel/Version" description="" value="0" type="string" />
+    <Preference name="Key8" memoryName="RobotConfig/Body/Color" description="" value="0" type="string" />
+    <Preference name="Key9" memoryName="RobotConfig/Body/Version" description="" value="0.4.0" type="string" />
+    <Preference name="Key10" memoryName="RobotConfig/Body/Type" description="" value="Juliette" type="string" />
+    <Preference name="Key11" memoryName="RobotConfig/Body/SoftwareRequirement" description="" value="1.22.0" type="string" />
+    <Preference name="Key12" memoryName="RobotConfig/Mode/Slave" description="" value="1" type="string" />
+    <Preference name="Key13" memoryName="Device/DeviceList/RightHandBoard/StoredSerialNumber" description="" value="0" type="int" />
+    <Preference name="Key14" memoryName="Device/SubDeviceList/RHand/Position/Sensor/jointZeroPosition" description="" value="2837" type="int" />
+    <Preference name="Key15" memoryName="Device/DeviceList/LeftHandBoard/StoredSerialNumber" description="" value="0" type="int" />
+    <Preference name="Key16" memoryName="Device/SubDeviceList/LHand/Position/Sensor/jointZeroPosition" description="" value="2085" type="int" />
+    <Preference name="Key17" memoryName="Device/SubDeviceList/LWristYaw/Position/Sensor/jointZeroPosition" description="" value="1132" type="int" />
+    <Preference name="Key18" memoryName="Device/SubDeviceList/RWristYaw/Position/Sensor/jointZeroPosition" description="" value="3163" type="int" />
+    <Preference name="Key19" memoryName="Device/DeviceList/ChestBoard/Bootloader/BodyId" description="" value="00000ALDR1109F004868" type="string" />
+    <Preference name="Key20" memoryName="Device/DeviceList/ChestBoard/Bootloader/BootloaderId" description="" value="ALDI000015__PA000001" type="string" />
+    <Preference name="Key21" memoryName="Device/DeviceList/ChestBoard/Bootloader/BoardId" description="" value="ALDE000102A180004868" type="string" />
+    <Preference name="Key22" memoryName="Device/DeviceList/ChestBoard/BodyId" description="" value="ALDR1109F004868" type="string" />
+    <Preference name="Key23" memoryName="RobotConfig/Body/Device/Joints/Calibration/Version" description="" value="1" type="string" />
+    <Preference name="Key24" memoryName="RobotConfig/Head/Version" description="" value="0.5.0" type="string" />
+    <Preference name="Key25" memoryName="Device/DeviceList/LeftShoulderBoard/StoredSerialNumber" description="" value="1110992410" type="int" />
+    <Preference name="Key26" memoryName="Device/SubDeviceList/LShoulderPitch/Position/Sensor/jointZeroPosition" description="" value="3156" type="int" />
+    <Preference name="Key27" memoryName="Device/SubDeviceList/LShoulderRoll/Position/Sensor/jointZeroPosition" description="" value="382" type="int" />
+    <Preference name="Key28" memoryName="Device/DeviceList/RightShoulderBoard/StoredSerialNumber" description="" value="440670284" type="int" />
+    <Preference name="Key29" memoryName="Device/SubDeviceList/RShoulderPitch/Position/Sensor/jointZeroPosition" description="" value="3798" type="int" />
+    <Preference name="Key30" memoryName="Device/SubDeviceList/RShoulderRoll/Position/Sensor/jointZeroPosition" description="" value="448" type="int" />
+    <Preference name="Key31" memoryName="Device/DeviceList/LeftArmBoard/StoredSerialNumber" description="" value="0" type="int" />
+    <Preference name="Key32" memoryName="Device/SubDeviceList/LElbowRoll/Position/Sensor/jointZeroPosition" description="" value="1" type="int" />
+    <Preference name="Key33" memoryName="Device/SubDeviceList/LElbowYaw/Position/Sensor/jointZeroPosition" description="" value="2734" type="int" />
+    <Preference name="Key34" memoryName="Device/DeviceList/RightArmBoard/StoredSerialNumber" description="" value="0" type="int" />
+    <Preference name="Key35" memoryName="Device/SubDeviceList/RElbowRoll/Position/Sensor/jointZeroPosition" description="" value="1" type="int" />
+    <Preference name="Key36" memoryName="Device/SubDeviceList/RElbowYaw/Position/Sensor/jointZeroPosition" description="" value="4092" type="int" />
+</ModulePreference>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ChoregrapheProject xmlns="http://www.aldebaran-robotics.com/schema/choregraphe/project.xsd" xar_version="3">
+    <Box name="root" id="-1" localization="8" tooltip="Root box of Choregraphe&apos;s project. Highest level possible." x="0" y="0">
+        <bitmap>media/images/box/root.png</bitmap>
+        <script language="4">
+            <content>
+                <![CDATA[]]>
+</content>
+        </script>
+        <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
+        <Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" />
+        <Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" />
+        <Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" />
+        <Timeline enable="0">
+            <BehaviorLayer name="behavior_layer1">
+                <BehaviorKeyframe name="keyframe1" index="1">
+                    <Diagram scale="100">
+                        <Box name="QRCode" id="3" localization="8" tooltip="Enter tooltip here" x="98" y="4">
+                            <bitmap>media/images/box/box-diagram.png</bitmap>
+                            <script language="4">
+                                <content>
+                                    <![CDATA[class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self)
+        self.subscribedEvents = []
+        self.barcodeReaderProxy = ALProxy("ALBarcodeReader")
+        self.memory = ALProxy("ALMemory")
+
+        self.keyQRCode =  "Launchpad/QRCode"
+        self.keyQRCodeAppID =  "Launchpad/QRCodeAppID"
+        self.keyQRCodePhoneID =  "Launchpad/QRCodePhoneID"
+        self.memory.declareEvent(self.keyQRCode) 
+        self.memory.declareEvent(self.keyQRCodeAppID)         
+        self.memory.declareEvent(self.keyQRCodePhoneID) 
+        self.memory.raiseEvent(self.keyQRCode,"") 
+        self.memory.raiseEvent(self.keyQRCodeAppID,0)
+        self.memory.raiseEvent(self.keyQRCodePhoneID,0) 
+
+    def onLoad(self):
+        pass
+
+    def onUnload(self):
+        self.memory.raiseEvent(self.keyQRCode,"") 
+        self.memory.raiseEvent(self.keyQRCodeAppID,0)
+        self.memory.raiseEvent(self.keyQRCodePhoneID,0) 
+        pass
+
+    def subscribeToEvent(self, eventName, callbackName):   
+        #Check if event is already subscribed        
+        try:
+            index = self.subscribedEvents.index(eventName)
+        except:
+            index = -1
+
+        if (index<0):
+            self.memory.subscribeToMicroEvent(eventName , self.getName(), "", callbackName)
+            self.subscribedEvents.append(eventName)
+        else:
+#            self.log("Already Subscribed to " + eventName + " event.")
+            pass
+
+
+    def unsubscribeEvents(self):
+        for ev in self.subscribedEvents:
+            self.lineLog("Unsubscribe to " + str(ev))                   
+            self.memory.unsubscribeToEvent(ev, self.getName())
+            self.log("Unsubscribe to ALBarCodeReader Module")
+            self.barcodeReaderProxy.unsubscribe(self.getName())                    
+            pass
+
+    def onInput_onStart(self):       
+#        self.onStopped() 
+        format = self.getParameter("videoMode")
+        formatId = int(format[0])
+        res = self.barcodeReaderProxy.setResolution(formatId)
+#        self.log("BarCode Reader: Selecting Video Format " + str(formatId) +  " ( "+ format +") " + " : " + str(res) )
+
+        fps = self.getParameter("frameRate")
+        res = self.barcodeReaderProxy.setFrameRate(fps)
+#        self.log("BarCode: Changed FPS to " + str(fps) + " : " + str(res) )
+        #Subscribe to the module & to the event       
+        self.subscribeToEvent( "BarcodeReader/BarcodeDetected", "onBarCodeEvent")
+        self.barcodeReaderProxy.subscribe(self.getName())                    
+        pass
+
+    def onInput_onStop(self):
+        self.onUnload() 
+        
+    def onBarCodeEvent(self, strVarName, value,message):
+        barcodestr= value[0][0]
+#        self.log("Event: " + strVarName + " = " + str(value) + " " + str(barcodestr) )              
+        self.memory.raiseEvent(self.keyQRCode , barcodestr)
+
+        substr = barcodestr.split("-")
+        if len(substr) == 2:
+            self.memory.raiseEvent(self.keyQRCodeAppID , substr[0])
+            self.memory.raiseEvent(self.keyQRCodePhoneID , substr[1])
+        else:
+            self.memory.raiseEvent(self.keyQRCodeAppID , "XXXX")
+            self.memory.raiseEvent(self.keyQRCodePhoneID , "XXXXXXXXXX")]]>
+</content>
+                            </script>
+                            <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
+                            <Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" />
+                            <Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" />
+                            <Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" />
+                            <Parameter name="videoMode" inherits_from_parent="0" content_type="3" value="2 VGA" default_value="2 VGA" custom_choice="0" tooltip="" id="5">
+                                <Choice value="0 QQVGA" />
+                                <Choice value="1 QVGA" />
+                                <Choice value="2 VGA" />
+                                <Choice value="3 4VGA" />
+                            </Parameter>
+                            <Parameter name="frameRate" inherits_from_parent="0" content_type="1" value="1" default_value="5" min="0" max="100" tooltip="" id="6" />
+                        </Box>
+                        <Box name="Comment" id="2" localization="8" tooltip="To comment your behavior. Enter the text here and move the box where you like&#x0A;to add the comment.&#x0A;&#x0A;Note: This box is not functional and has no effect on the behavior." plugin="textedit_plugin" x="72" y="131">
+                            <bitmap>media/images/box/box-script.png</bitmap>
+                            <script language="4">
+                                <content>
+                                    <![CDATA[class MyClass(GeneratedClass):
+	def __init__(self):
+		try: # disable autoBind
+		  GeneratedClass.__init__(self, False)
+		except TypeError: # if NAOqi < 1.14
+		  GeneratedClass.__init__( self )
+
+	def onInput_onStart(self):
+		self.onStopped("\"QRCode\" plugin for Autonomous Life. ")]]>
+</content>
+                            </script>
+                            <pluginContent>
+                                <text>&quot;QRCode&quot; plugin for Autonomous Life. </text>
+                            </pluginContent>
+                            <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when Diagram is loaded." id="1" />
+                        </Box>
+                        <Link inputowner="3" indexofinput="2" outputowner="0" indexofoutput="2" />
+                    </Diagram>
+                </BehaviorKeyframe>
+            </BehaviorLayer>
+        </Timeline>
+    </Box>
+</ChoregrapheProject>

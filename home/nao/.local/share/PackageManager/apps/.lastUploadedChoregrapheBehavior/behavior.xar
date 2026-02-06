@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?><ChoregrapheProject xmlns="http://www.aldebaran-robotics.com/schema/choregraphe/project.xsd" xar_version="3"><Box name="root" id="-1" localization="8" tooltip="Root box of Choregraphe&apos;s project. Highest level possible." x="0" y="0"><bitmap>media/images/box/root.png</bitmap><script language="4"><content><![CDATA[]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" /><Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" /><Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" /><Timeline enable="0"><BehaviorLayer name="behavior_layer1"><BehaviorKeyframe name="keyframe1" index="1"><Diagram><Box name="CalibInStop" id="1" localization="0" tooltip="Calibration in mechanical stop" x="219" y="93"><bitmap>media/images/box/box-diagram.png</bitmap><script language="4"><content><![CDATA[import almath as m
+class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self)
+        pass
+
+    def onLoad(self):
+        self.dcm = ALProxy("DCM")
+        #~ puts code for box initialization here
+        pass
+
+    def onUnload(self):
+        #~ puts code for box cleanup here
+        pass
+
+    def onInput_onStart(self):
+        chainName = self.getParameter("name")
+        if(chainName=="Leg"):
+            self.dcm.calibration(["HipPitch/Position/Actuator/Value", "Manual" , "InPosition",-60.0*m.TO_RAD])
+            self.dcm.calibration(["KneePitch/Position/Actuator/Value", "Manual" , "InPosition", 30.0*m.TO_RAD])
+            self.dcm.calibration(["HipRoll/Position/Actuator/Value", "Manual" , "InPosition",-32.0*m.TO_RAD])
+
+        if(chainName=="Head"):
+            self.dcm.calibration(["HeadPitch/Position/Actuator/Value", "Manual" , "InPosition",-45.0*m.TO_RAD])
+            self.dcm.calibration(["HeadYaw/Position/Actuator/Value", "Manual" , "InPosition",-120.0*m.TO_RAD])
+
+        if(chainName=="LArm"):
+            self.dcm.calibration(["LShoulderPitch/Position/Actuator/Value", "Manual" , "InPosition",-120.0*m.TO_RAD])
+            self.dcm.calibration(["LShoulderRoll/Position/Actuator/Value", "Manual" , "InPosition", 90.0*m.TO_RAD])
+            #self.dcm.calibration(["LElbowRoll/Position/Actuator/Value", "Manual" , "InPosition", 0.0*m.TO_RAD])
+            #self.dcm.calibration(["LElbowYaw/Position/Actuator/Value", "Manual" , "InPosition",-120.0*m.TO_RAD])
+            #self.dcm.calibration(["LWristYaw/Position/Actuator/Value", "Manual" , "InPosition",-105.0*m.TO_RAD])
+
+        if(chainName=="RArm"):
+            self.dcm.calibration(["RShoulderPitch/Position/Actuator/Value", "Manual" , "InPosition",-120.0*m.TO_RAD])
+            self.dcm.calibration(["RShoulderRoll/Position/Actuator/Value", "Manual" , "InPosition",-90.0*m.TO_RAD])
+            #self.dcm.calibration(["RElbowRoll/Position/Actuator/Value", "Manual" , "InPosition", 0.0*m.TO_RAD])
+            #self.dcm.calibration(["RElbowYaw/Position/Actuator/Value", "Manual" , "InPosition", 120.0*m.TO_RAD])
+            #self.dcm.calibration(["RWristYaw/Position/Actuator/Value", "Manual" , "InPosition", 105.0*m.TO_RAD])
+
+        self.dcm.preferences("Save", "Chest", "", 0.0)
+        self.onStopped() #~ activate output of the box
+        pass
+
+    def onInput_onStop(self):
+        self.onUnload() #~ it is recommended to call onUnload of this box in a onStop method, as the code written in onUnload is used to stop the box as well
+        pass]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" /><Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" /><Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" /><Parameter name="name" inherits_from_parent="0" content_type="3" value="RArm" default_value="Leg" custom_choice="0" tooltip="" id="5"><Choice value="Head" /><Choice value="LArm" /><Choice value="RArm" /><Choice value="Leg" /></Parameter></Box><Link inputowner="1" indexofinput="2" outputowner="0" indexofoutput="2" /></Diagram></BehaviorKeyframe></BehaviorLayer></Timeline></Box></ChoregrapheProject>

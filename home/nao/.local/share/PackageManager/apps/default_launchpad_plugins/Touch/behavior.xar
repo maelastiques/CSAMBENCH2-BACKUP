@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ChoregrapheProject xmlns="http://www.aldebaran-robotics.com/schema/choregraphe/project.xsd" xar_version="3">
+    <Box name="root" id="-1" localization="8" tooltip="Root box of Choregraphe&apos;s project. Highest level possible." x="0" y="0">
+        <bitmap>media/images/box/root.png</bitmap>
+        <script language="4">
+            <content>
+                <![CDATA[]]>
+</content>
+        </script>
+        <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
+        <Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" />
+        <Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" />
+        <Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" />
+        <Timeline enable="0">
+            <BehaviorLayer name="behavior_layer1">
+                <BehaviorKeyframe name="keyframe1" index="1">
+                    <Diagram>
+                        <Box name="TouchMonitor" id="5" localization="8" tooltip="Subscribes to TouchChanged and raise launchpad events accordingly." x="119" y="29">
+                            <bitmap>media/images/box/box-script.png</bitmap>
+                            <script language="4">
+                                <content>
+                                    <![CDATA[class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self)
+
+    def onLoad(self):
+        #put initialization code here
+        self.touch = ALProxy('ALTouch')
+        self.memory = ALProxy('ALMemory')
+        self.key_touch = 'TouchChanged'
+
+        # easy way to do. doesn't work on all robots
+        # use ALTouch.getSensorList to get the whole list on the robot
+        template = "Launchpad/%s"
+        self.launchpadKeys = {
+            'Bumper/Back':template % 'Bumper/Back',
+            'Bumper/FrontLeft':template % 'Bumper/FrontLeft',
+            'Bumper/FrontRight':template % 'Bumper/FrontRight',
+            'ChestBoard/Button':template % 'ChestButton',
+            'Head/Touch/Front':template % 'Head/Touch/Front',
+            'Head/Touch/Middle':template % 'Head/Touch/Middle',
+            'Head/Touch/Rear':template % 'Head/Touch/Rear',
+            'LHand/Touch/Back':template % 'Hand/Left',
+            'RHand/Touch/Back':template % 'Hand/Right'
+        }
+        for eventKey in self.launchpadKeys.values():
+            self.memory.declareEvent(eventKey)
+
+    def onUnload(self):
+        #put clean-up code here
+        self.memory.unsubscribeToEvent(self.key_touch, self.getName())
+        for eventKey in self.launchpadKeys.values():
+            self.memory.raiseEvent(eventKey, None)
+
+    def onInput_onStart(self):
+        #self.onStopped() #activate the output of the box
+        self.memory.subscribeToEvent(self.key_touch, self.getName(), "onTouchChanged")
+
+    def onInput_onStop(self):
+        self.onUnload() #it is recommended to reuse the clean-up as the box is stopped
+
+    def onTouchChanged(self, key, value, message):
+        """converts ALTouch events to Launchpad events"""
+        for k,v in value:
+            if k in self.launchpadKeys.keys():
+                # 1*v converts bool to int
+                self.memory.raiseEvent(self.launchpadKeys[k], 1*v)]]>
+</content>
+                            </script>
+                            <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
+                            <Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" />
+                            <Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" />
+                            <Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" />
+                        </Box>
+                        <Link inputowner="5" indexofinput="2" outputowner="0" indexofoutput="2" />
+                    </Diagram>
+                </BehaviorKeyframe>
+            </BehaviorLayer>
+        </Timeline>
+    </Box>
+</ChoregrapheProject>

@@ -1,0 +1,11 @@
+<div class="modal-header">
+<h3 class="modal-title">Permit Deactivation of the Fall Manager reflex.</h3>
+</div>
+<div class="modal-body">
+    WARNING: The FallManager is designed to protect your robot. When the robot senses that it is starting to fall, it prepares a defensive position and reduces the stiffness of its joints in order to minimize damage. Tests have shown that this significantly reduces the chance of breakage.
+    <br>NOTE: This change will not itself deactivate the FallManager. Use ALMotion.setFallManagerEnabled(false) to deactivate this reflex.
+</div>
+<div class="modal-footer">
+    <button class="btn btn-success" type="button" ng-click="ok()">I understand the risks</button>
+    <button class="btn btn-danger" type="button" ng-click="cancel()">No thanks, I prefer to be protected</button>
+</div>

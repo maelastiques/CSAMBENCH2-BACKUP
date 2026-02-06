@@ -1,0 +1,29 @@
+<div class="container-fluid">
+    <h1>{{'STORE' | translate }}</h1>
+    <div class="row">
+        <div class="col-md-1"></div>
+        <label for="login" class="col-md-1 text-right">Login:</label>
+        <input ng-disabled="store.isLoading || store.isConnected" class="col-md-1" type="text" id="login" name="login" ng-model="store.login">
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-md-1"></div>
+        <label for="password" class="col-md-1 text-right">Password:</label>
+        <input class="col-md-1" ng-disabled="store.isLoading || store.isConnected" ng-enter="store.isLoading || store.isConnected || connect()" type="password" id="password" name="password" ng-model="store.password">
+        <div ng-show="!store.isLoading && store.isConnected" class="col-md-1"><button class="btn btn-primary" ng-click="disconnect()">Disconnect</button></div>
+        <div ng-hide="store.isLoading || store.isConnected" class="col-md-1"><button class="btn btn-primary" ng-click="connect()">Connect</button></div>
+        <div ng-show="store.isLoading" class="col-md-1"><img src="img/load-120px.gif" width="20"/></div>
+    </div>
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-6 error"
+                    ng-show="store.error">
+                <small>{{store.error}}</small>
+            </div>
+    </div>
+    <h1>{{'SECURITY' | translate }}</h1>
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-6"><input type="checkbox" ng-model="permitDeactivation"/> Permit Deactivation of the Fall Manager reflex.</div>
+    </div>
+</div>

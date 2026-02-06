@@ -1,0 +1,130 @@
+body {
+	background-color: lightgrey;
+
+	/* Deactivate selection */
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+h1 {
+	font-size: 40px;
+}
+
+#page {
+	display: table;
+	text-align: center;
+	position: absolute;
+	width: 1250px;
+	height: 800px;
+	left: 0px;
+	top: 0px;
+}
+
+.centered{
+  display: table-cell;
+  vertical-align: middle;
+ }
+
+.friendlybutton {
+	background-color: #dcdcdc;
+	border: 1px solid #666;
+	color:#000;
+	display: inline-block;
+	vertical-align: middle;
+	display: table-cell;
+}
+
+.mediumbutton {
+	width: 350px;
+	height: 300px;
+	font-size: 25px;
+}
+
+.bigbutton {
+	width: 400px;
+	height: 500px;
+	font-size: 25px;
+}
+
+.unclickable {
+	color: darkgrey;
+}
+/* Specific to EULA page
+ */
+
+#eula-text {
+	font-size: 20px;
+}
+
+#buttonline {
+	width: 700px;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+
+.buttondiv {
+	background-color: #dcdcdc;
+	border: 2px solid #666;
+	color:#000;
+}
+
+/* Exit button
+ */
+ 
+#corner-button {
+	position: absolute;
+	right: 0px;
+	top: 0px;
+	width: 190px;
+	height: 100px;
+	
+	font-size: 50px;
+	line-height: 100px;
+	color: darkred;
+
+	display: none;
+	font-weight: bold;
+}
+
+#corner-unfolded-button {
+	position: absolute;
+	right: 0px;
+	top: 0px;
+	width: 190px;
+	height: 190px;
+	
+	display: none;  /*starts hidden*/
+}
+
+#exit-button {
+	position: absolute;
+	right: 30px;
+	top: 165px;
+	width: 130px;
+	height: 130px;
+}
+
+#exit-button  > img{
+	width: 150px;
+	height: 150px;
+}
+
+#debugsplash {
+	position:absolute;
+	left:400px;
+	width:480px;
+	top: 300px;
+	height: 200px;
+}
+
+#debugsplash  > input{
+	width:220px;
+	height: 200px;
+	font-size: 32px;
+}

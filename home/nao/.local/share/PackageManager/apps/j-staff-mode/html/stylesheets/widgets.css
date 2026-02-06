@@ -1,0 +1,106 @@
+#page {
+	height: 800px;
+	width: 1250px;
+}
+
+#widget-tray {
+	bottom: 5px;
+	position: absolute;
+	height: 160px;
+}
+
+#right-widget-tray {
+	bottom: 5px;
+	position: absolute;
+	height: 160px;
+	right: 5px;
+}
+
+.hidden {
+	visibility: hidden;
+}
+
+.traywidget {
+	width: 160px;
+	height: 150px;
+	display: inline-block;
+	border-style: solid;
+	border-width: 2px;
+	margin: 2px;
+	float: left;
+	
+	font-size: 30px;
+}
+
+.traywidget.available {
+	background-color: white;
+	border-color: black;
+}
+
+.traywidget.unavailable {
+	background-color: lightgrey;
+	border-color: darkgrey;
+}
+
+.traywidget.selected {
+	background-color: white;
+	border-color: blue;
+}
+
+#alife-traywidget.available  {
+	background-color: green;
+	border-color: black;
+}
+
+#alife-traywidget.unavailable  {
+	background-color: grey;
+	border-color: black;
+}
+
+#alife-traywidget.selected  {
+	background-color: green;
+	border-color: blue;
+}
+
+
+
+/* Wizard tray
+ */
+ 
+#wizard-tray {
+	position: absolute;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	height: 160px;
+	
+	display: none;
+}
+
+#wizard-backbutton {
+	position: absolute;
+	bottom: 10px;
+	left: 20px;
+	height: 140px;
+	width: 300px;
+
+	line-height: 140px;
+	font-size: 80px;
+}
+
+#wizard-nextbutton {
+	position: absolute;
+	bottom: 10px;
+	right: 20px;
+	height: 140px;
+	width: 300px;
+
+	line-height: 140px;
+	font-size: 80px;
+}
+
+
+#wizard-nextbutton.disabled {
+	color: darkgrey;
+	border-color: darkgrey;
+}

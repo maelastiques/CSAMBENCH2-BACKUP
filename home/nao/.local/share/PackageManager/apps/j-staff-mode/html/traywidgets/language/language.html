@@ -1,0 +1,29 @@
+<div class="traywidget unavailable" id="language-traywidget"
+	data-name="language"
+	data-rank=10
+	data-fragment="fragments/language/language.html"
+	data-icon_english="Flag_English.png"
+	data-icon_french="Flag_French.png"
+	data-icon_japanese="Flag_Japanese.png"
+	data-icon_chinese="Flag_Chinese.png"
+	>
+	<div class="label">Language</div>
+	<img id="language-icon" class="icon" src="traywidgets/language/loading.gif"/>
+	<script type="text/javascript">
+		$(function() {
+			log("Trying to get language");
+			if ($.qim) {
+				$.getService("ALTextToSpeech", function (tts) {
+					tts.getLanguage().done(function (language) {
+						$("#language-traywidget").setIconState(language);
+					}).fail(function() {
+						log("[DBG] Failed getting language");
+					})
+				});
+			} else {
+				log("[DBG] No QiMessaging, can't get language");
+				$("#language-traywidget").setIconState("English");
+			}
+		});
+	</script>
+</div>

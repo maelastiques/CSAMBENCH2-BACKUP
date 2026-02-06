@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ModulePreference name="aldebaran-robotics.com@ALTelepathe" xmlns="http://www.aldebaran-robotics.com/ns/ALPreference" schemaLocation="ModulePreference.xsd">
+    <Preference name="user" description="An Aldebaran Robotics user name." value="mael.cuny@gmail.com" type="string" />
+    <Preference name="login" description="The robot&apos;s login." value="robot-aldt1109f004682@presence.aldebaran-robotics.com" type="string" />
+    <Preference name="password" description="Password associated with the user name." value="4b0e8b8b351514e0f648c4167f36008b1da24b17" type="string" />
+    <Preference name="apitoken" description="API token used for cloud services." value="049d86215f0ba1c25b51a2ce1a858c7da2645daf" type="string" />
+    <Preference name="autoconnect" description="Whether to connect at module startup." value="true" type="string" />
+</ModulePreference>
