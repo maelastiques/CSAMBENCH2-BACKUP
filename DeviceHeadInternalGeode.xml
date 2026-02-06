@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ModulePreference name="aldebaran-robotics.com@Hal" xmlns="http://www.aldebaran-robotics.com/ns/ALPreference" schemaLocation="ModulePreference.xsd">
+    <Preference name="Key1" memoryName="RobotConfig/Head/Device/LaserRangeFinder/Version" description="" value="0" type="string" />
+    <Preference name="Key2" memoryName="RobotConfig/Head/Device/Camera/Version" description="" value="3" type="string" />
+    <Preference name="Key3" memoryName="RobotConfig/Head/Device/Processor/Frequency" description="" value="1.6" type="string" />
+    <Preference name="Key4" memoryName="RobotConfig/Head/Device/FaceBoard/Leds/Rotation" description="" value="1" type="string" />
+    <Preference name="Key5" memoryName="RobotConfig/Head/Color" description="" value="0" type="string" />
+    <Preference name="Key6" memoryName="RobotConfig/Head/BaseVersion" description="" value="DVT" type="string" />
+    <Preference name="Key7" memoryName="RobotConfig/Head/HeadId" description="" value="4682" type="string" />
+    <Preference name="Key8" memoryName="RobotConfig/Head/Device/MicroSD/Size" description="" value="8" type="string" />
+    <Preference name="Key9" memoryName="RobotConfig/Head/Device/TouchBoard/Version" description="" value="2" type="string" />
+    <Preference name="Key10" memoryName="RobotConfig/Head/FullHeadId" description="" value="ALDT1109F004682" type="string" />
+    <Preference name="Key11" memoryName="RobotConfig/Head/Type" description="" value="Juliette" type="string" />
+    <Preference name="Key12" memoryName="RobotConfig/Head/Device/3dCamera/Version" description="" value="2" type="string" />
+    <Preference name="Key13" memoryName="RobotConfig/Head/Device/Micro/Version" description="" value="1" type="string" />
+    <Preference name="Key14" memoryName="RobotConfig/Mode/Slave" description="" value="1" type="string" />
+</ModulePreference>
